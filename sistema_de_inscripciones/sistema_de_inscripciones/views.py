@@ -2,17 +2,14 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
+from sistema_de_inscripciones.forms import *
 import json
 
 
 def index(request):
-    return render(request, 'index.html')
-
-
-def login(request):
     if request.method == 'POST':
-        user = auth.authenticate(email=request.POST['email'], password=request.POST['password'])
-        if user is not None and user.habilitado:
+        user = auth.authenticate(dni=request.POST['dni'], password=request.POST['password'])
+        if user is not None and user.is_active:
             auth.login(request, user)
             response_data = {
                 'result': 'Login',
@@ -32,8 +29,8 @@ def login(request):
                 }
             return HttpResponse(json.dumps(response_data))
     else:
-        formLogin = LoginForm()
-    return render(request, 'funcionalidades/login.html', {'formLogin': formLogin})
+        loginForm = LoginForm()
+    return render(request, 'index.html', {'form': loginForm})
 
 
 @login_required

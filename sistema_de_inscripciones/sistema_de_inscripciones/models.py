@@ -80,7 +80,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     objects = AccountManager()
 
     USERNAME_FIELD = 'dni'
-    REQUIRED_FIELDS = ['dni', 'first_name', 'last_name']
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
 
 class Alumno(User):
@@ -98,10 +98,10 @@ class Materia(BaseModel):
 
 
 class MateriasInscriptas(BaseModel):
-    alumno            = models.ForeignKey(Alumno)
-    codigo_de_materia = models.ForeignKey(Materia)
+    alumno            = models.ForeignKey(Alumno, on_delete=models.SET_NULL, null=True)
+    codigo_de_materia = models.ForeignKey(Materia, on_delete=models.SET_NULL, null=True)
 
 
 class MateriasAprobadas(BaseModel):
-    alumno            = models.ForeignKey(Alumno)
-    codigo_de_materia = models.ForeignKey(Materia)
+    alumno            = models.ForeignKey(Alumno, on_delete=models.SET_NULL, null=True)
+    codigo_de_materia = models.ForeignKey(Materia, on_delete=models.SET_NULL, null=True)

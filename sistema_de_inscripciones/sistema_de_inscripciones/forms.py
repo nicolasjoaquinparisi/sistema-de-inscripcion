@@ -13,20 +13,11 @@ class LoginForm(ModelForm):
     class Meta:
         model = User
 
-        fields = {'email', 'password'}
+        fields = {'dni', 'password'}
 
         widgets = {
-            'email' : EmailInput(attrs={'type': 'email', 'class': 'form-control', 'id' : 'inputEmail'
-                                        , 'placeholder' : 'Ingresa aquí tu email', 'required': 'True'}),
+            'dni' : TextInput(attrs={'type': 'number', 'class': 'form-control', 'id' : 'inputDNI'
+                                        , 'placeholder' : 'Ingresa aquí tu DNI', 'required': 'True'}),
             'password': TextInput(attrs={'type' : 'password','class': 'form-control', 'id' : 'inputPassword',
                                         'placeholder' : 'Ingresa aquí tu contraseña', 'required': 'True'}),
         }
-
-    def validar_login(self):
-        if self.campos_vacios():
-            return False
-
-    def campos_vacios(self):
-        if not self.data['email'] or not self.data['password']:
-            return True
-        return False
