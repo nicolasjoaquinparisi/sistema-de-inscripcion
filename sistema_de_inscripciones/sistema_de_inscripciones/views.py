@@ -11,11 +11,7 @@ def index(request):
         user = auth.authenticate(dni=request.POST['dni'], password=request.POST['password'])
         if user is not None and user.is_active:
             auth.login(request, user)
-            response_data = {
-                'result': 'Login',
-                'message': 'Login'
-            }
-            return HttpResponse(json.dumps(response_data))
+            return redirect('/home')
         else:
             response_data = {
              'result': 'Error',

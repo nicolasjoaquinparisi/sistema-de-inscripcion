@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class AccountManager(BaseUserManager):
-    def create_superuser(self, email, first_name, password, **other_fields):
+    def create_superuser(self, dni, first_name, password, **other_fields):
         other_fields.setdefault('is_staff', True)
         other_fields.setdefault('is_superuser', True)
         other_fields.setdefault('is_active', True)
@@ -18,9 +18,9 @@ class AccountManager(BaseUserManager):
             raise ValueError(
                 'Superuser must be assigned to is_superuser=True.')
 
-        return self.create_user(email, first_name, password, **other_fields)
+        return self.create_user(dni, first_name, password, **other_fields)
 
-    def crearte_user(self, dni, first_name, password, **other_fields):
+    def create_user(self, dni, first_name, password, **other_fields):
         user = self.model(dni=dni, first_name=first_name, **other_fields)
         user.set_password(password)
         user.save()
