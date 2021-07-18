@@ -33,3 +33,15 @@ def index(request):
 def logout(request):
     auth.logout(request)
     return redirect('/')
+
+
+@login_required
+def home(request):
+    return render(request, 'home.html')
+
+
+@login_required
+def listar_carreras(request):
+    carreras = Carrera.find_all()
+    context = {'carreras':carreras}
+    return render(request, 'admin/listar-carreras.html', context)

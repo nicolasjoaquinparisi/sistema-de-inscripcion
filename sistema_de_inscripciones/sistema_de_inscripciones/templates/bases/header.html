@@ -1,6 +1,6 @@
 {% load static %}
 
-<header class="bg-light text-white ps-5 pe-5 pt-5 pb-3">
+<header class="container-fluid bg-light text-white ps-5 pe-5 pt-5 pb-5">
     <div class="row">
         <div class="col d-flex justify-content-start">
             <h2 class="text-dark">Sistema de Inscripciones</h2>
@@ -8,13 +8,25 @@
 
         <div class="col">
             <div class="d-flex justify-content-end">
-                <h2 id="fecha-1" class="text-muted row"></h2>
-            </div>
-            <div class="d-flex justify-content-end">
-                <h5 id="fecha-2" class="text-muted row"></h5>
+                {% if request.user.is_authenticated is True %}
+                    <div class="d-flex align-items-center justify-content-end" style="margin-top:20px;">
+                        <div class="dropdown">
+                            <a class="navbar-brand btn button-logout dropdown-toggle" type="button"
+                                id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                {% if request.user.is_superuser %}
+                                    Admin: {{ user.first_name }}
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+
+                                <li><a class="dropdown-item" href="/#">Perfil</a></li>
+
+                                <li><a class="dropdown-item" href="/logout">Cerrar sesión</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </header>
-
-<hr class="text-dark mb-3" style="margin: 0;">

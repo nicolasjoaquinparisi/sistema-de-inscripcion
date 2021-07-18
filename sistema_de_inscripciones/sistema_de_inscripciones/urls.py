@@ -21,5 +21,7 @@ urlpatterns = [
     path('', index),
     path('logout/', logout),
 
-    #path('about/', TemplateView.as_view(template_name='about.html')),
+    path('home/', home),
+
+    path('listar-carreras/', listar_carreras),
 ]

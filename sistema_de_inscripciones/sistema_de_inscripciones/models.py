@@ -1,4 +1,4 @@
-from re import M
+from re import M, findall
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
@@ -40,6 +40,8 @@ class AccountManager(BaseUserManager):
 class BaseModel(models.Model):
     class Meta:
         abstract = True
+    
+    is_active = models.BooleanField(default=True)
     
     def delete(self):
         if self.is_active:
@@ -87,14 +89,23 @@ class Alumno(User):
     fecha_nacimiento = models.DateTimeField()
     fecha_de_alta    = models.DateField()
     domicilio        = models.CharField(max_length=150, blank=True)
+    legajo           = models.IntegerField()
 
     def __str__(self):
         return f'\'{self.last_name}\', \'{self.first_name}\''
     
+    @property
+    def descripcion(self):
+        return f'\'{self.first_name}\', \'{self.last_name}\' \'({self.legajo})\''
+    
+
+class Carrera(BaseModel):
+    nombre = models.CharField(max_length=50, blank=False, unique=True)
 
 class Materia(BaseModel):
-    codigo = models.CharField(max_length=50, blank=False, unique=True, null=False)
-    nombre = models.CharField(max_length=150, blank=False)
+    codigo            = models.CharField(max_length=50, blank=False, unique=True, null=False)
+    codigo_de_carrera = models.ForeignKey(Carrera, on_delete=models.SET_NULL, null=True)
+    nombre            = models.CharField(max_length=150, blank=False)
 
 
 class MateriasInscriptas(BaseModel):

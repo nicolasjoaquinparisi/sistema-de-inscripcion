@@ -5,3 +5,33 @@
 body {
     background-color: #f7f6f6
 }
+
+.nav {
+    padding: 0;
+}
+
+.nav-button {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    padding: 1rem 2rem;
+}
+.nav-button:hover {
+    background-color: var(--bs-gray-dark);
+    color: var(--oscuro);
+    cursor: pointer;
+}
+
+.button-altas {
+    font-size: 1.1rem;
+}
+.button-altas:focus {
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+.btn-xl {
+    padding: 1rem;
+    font-size: 2rem;
+}
