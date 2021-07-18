@@ -26,12 +26,16 @@ body {
     font-size: 1.1rem;
 }
 .button-altas:focus {
-    outline: none;
     box-shadow: none;
-    border: none;
 }
 
 .btn-xl {
     padding: 1rem;
     font-size: 2rem;
+}
+.btn-xl:hover {
+
+}
+.btn-xl:focus {
+    outline: none;
 }

@@ -13,7 +13,7 @@
         integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
     <link rel="stylesheet" href="sweetalert2.min.css">
-    <title>Carreras</title>
+    <title>Materias</title>
 </head>
 
 <body>
@@ -23,12 +23,12 @@
     {% include 'admin/admin-nav-bar.html' %}
 
     <div class="container-fluid">
-        <a class="me-3 btn btn-xl button-altas text-secondary" type="button" href="/alta-carrera">Dar de alta carrera</a>
+        <a class="me-3 btn btn-xl button-altas text-secondary" type="button" href="/alta-materia">Dar de alta materia</a>
     </div>
 
     <br>
 
-    {% if carreras.count == 0 %}
+    {% if materias.count == 0 %}
     <div id="mensaje" class="container p-4">
         <div class="row">
             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-alert-circle" width="100"
@@ -42,7 +42,7 @@
         </div>
         <div class="row">
             <div class="d-flex justify-content-center text-center">
-                <h2 class="h2" style="color:#9e9e9e;">Actualmente no hay carreras dadas de alta en el sistema.</h2>
+                <h2 class="h2" style="color:#9e9e9e;">Actualmente no hay materias dadas de alta en el sistema.</h2>
             </div>
         </div>
     </div>
@@ -55,13 +55,15 @@
             <table id="tabla" class="table table-borderless table-striped table-earning">
                 <thead>
                     <tr>
+                        <th class="text-center">Código</th>
                         <th class="text-center">Nombre</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for carrera in carreras %}
+                    {% for materia in materias %}
                     <tr>
-                        <td class="text-center">{{carrera.nombre}}</td>
+                        <td class="text-center">{{materia.codigo}}</td>
+                        <td class="text-center">{{materia.nombre}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

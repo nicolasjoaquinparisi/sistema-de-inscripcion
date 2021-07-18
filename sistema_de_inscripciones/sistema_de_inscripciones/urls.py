@@ -24,4 +24,8 @@ urlpatterns = [
     path('home/', home),
 
     path('listar-carreras/', listar_carreras),
+    path('alta-carrera/', alta_carrera),
+
+    path('listar-materias/', listar_materias),
+    path('alta-materia/', alta_materia),
 ]

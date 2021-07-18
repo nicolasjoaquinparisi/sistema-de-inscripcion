@@ -102,10 +102,39 @@ class Alumno(User):
 class Carrera(BaseModel):
     nombre = models.CharField(max_length=50, blank=False, unique=True)
 
+
 class Materia(BaseModel):
     codigo            = models.CharField(max_length=50, blank=False, unique=True, null=False)
     codigo_de_carrera = models.ForeignKey(Carrera, on_delete=models.SET_NULL, null=True)
     nombre            = models.CharField(max_length=150, blank=False)
+
+    @classmethod
+    def crear_materia(cls, data):
+        materia = Materia()
+        materia.codigo = data['codigo']
+        materia.nombre = data['nombre']
+        materia.save()
+        return materia
+
+    @classmethod
+    def puede_dar_de_alta(cls, codigo, nombre):
+        return cls.codigo_valido(codigo) and cls.nombre_valido(nombre)
+    
+    @classmethod
+    def codigo_valido(cls, codigo):
+        return cls.find_first(models.Q(codigo=codigo)) == None
+    
+    @classmethod
+    def nombre_valido(cls, nombre):
+        return cls.find_first(models.Q(nombre=nombre)) == None
+    
+    @classmethod
+    def get_mensaje_de_error(cls, codigo, nombre):
+        if not cls.codigo_valido(codigo):
+            return 'El código ingresado se encuentra en uso.'
+        if not cls.nombre_valido(nombre):
+            return 'El nombre ingresado se encuentra en uso.'
+        return 'Se ha producido un error.'
 
 
 class MateriasInscriptas(BaseModel):
