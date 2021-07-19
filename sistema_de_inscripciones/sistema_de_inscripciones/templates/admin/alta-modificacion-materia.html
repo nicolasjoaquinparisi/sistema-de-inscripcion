@@ -81,8 +81,8 @@
 
                 {% for materia in materias %}
                 <div class="form-check">
-                    <input id={{materia}} class="materia form-check-input" type="checkbox" value="">
-                    <label for={{materia}} class="form-label">{{materia}}</label>
+                    <input id="{{materia}}" class="materia form-check-input" name="{{materia}}" type="checkbox" onclick='onCheckBoxCorrelativaClick("{{materia}}")'>
+                    <label for="{{materia}}" class="form-label">{{materia}}</label>
                     <br>
                 </div>
                 {% endfor %}

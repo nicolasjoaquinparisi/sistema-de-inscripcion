@@ -2,6 +2,7 @@ from re import M, findall
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
+from django.utils.html import conditional_escape
 from django.utils.translation import gettext_lazy as _
 
 
@@ -111,14 +112,50 @@ class Materia(BaseModel):
 
     def __str__(self):
         return f'({self.codigo}) {self.nombre}'
+    
+    @property
+    def get_correlatividades(self):
+        correlativas = Correlatividades.find_all(models.Q(codigo_de_materia=self))
+        if len(correlativas) == 0:
+            return "-"
+
+        materias_correlativas = []
+        for c in correlativas:
+            materias_correlativas.append(c.codigo_de_correlativa)
+
+        return materias_correlativas
+
+    '''
+    Recibe el request.POST enviado desde la view
+    Genera una lista con todos los códigos de las correlativas seleccionadas
+    Crea las instancias de las correlativas de la materia dada de alta
+    '''
+    @classmethod
+    def crear_correlativas(cls, materia, post):
+        correlativas = []
+        for i in range(3, len(post)-1):
+            correlativas.append(post[i])
+        
+        for correlativa in correlativas:
+            correlativa = correlativa[correlativa.find("(")+1:correlativa.find(")")]
+            c = Correlatividades.crear_correlativa(materia, correlativa)
 
     @classmethod
-    def crear_materia(cls, data, año):
+    def crear_materia(cls, data, año, post):
         materia = Materia()
         materia.codigo = data['codigo']
         materia.nombre = data['nombre']
         materia.año    = año
         materia.save()
+
+        '''
+        Se verifica si la materia tiene correlatividades
+        Si el request.POST tiene 4 elementos, entonces es porque no tiene correlativas la materia
+        (El primer elemento es el codigo, el segundo, el nombre, el tercero, el año y el último el token)
+        '''
+        if len(post) > 4:
+            cls.crear_correlativas(materia, post)
+
         return materia
 
     @classmethod
@@ -145,6 +182,17 @@ class Materia(BaseModel):
 class Correlatividades(BaseModel):
     codigo_de_materia     = models.ForeignKey(Materia, on_delete=models.SET_NULL, null=True, related_name='codigo_de_materia')
     codigo_de_correlativa = models.ForeignKey(Materia, on_delete=models.SET_NULL, null=True, related_name='codigo_de_correlativa')
+
+    @classmethod
+    def crear_correlativa(cls, materia, codigo):
+        correlativa = Correlatividades()
+        correlativa.codigo_de_materia = materia
+
+        #Se busca la materia correlativa a partir del codigo obtenido
+        materia = Materia.find_first(models.Q(codigo=codigo))
+        correlativa.codigo_de_correlativa = materia
+
+        correlativa.save()
 
 
 class MateriasInscriptas(BaseModel):

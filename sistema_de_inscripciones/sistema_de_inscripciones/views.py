@@ -70,19 +70,21 @@ def alta_materia(request):
     
     if request.method == 'POST':
         form = AltaMateriaForm(request.POST)
-
+        
         validacion = form.validar_materia()
+        resultado_validacion = validacion[0]
+        mensaje_validaciones = validacion[1]
 
         response_data = {
-            'result': 'OK' if validacion[0] else 'Error',
-            'message': validacion[1]
+            'result': 'OK' if resultado_validacion else 'Error',
+            'message': mensaje_validaciones
         }
 
-        if validacion[0]:
+        if resultado_validacion:
             data = form.cleaned_data
             año  = request.POST.get('radio-button-año', 'value')
 
-            materia = Materia.crear_materia(data, año)
+            materia = Materia.crear_materia(data, año, list(request.POST))
         else:
             context = {'form':form, 'materias':Materia.find_all()}
 

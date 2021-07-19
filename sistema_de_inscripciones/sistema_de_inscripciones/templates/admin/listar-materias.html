@@ -50,7 +50,7 @@
     {% else %}
 
 
-    <div class="p-3 mb-5 rounded w-50 p-3 container my-4">
+    <div class="p-3 mb-5 rounded w-75 p-3 container my-4">
         <div class="table-border table-responsive table--no-card m-b-30">
             <table id="tabla" class="table table-borderless table-striped table-earning">
                 <thead>
@@ -58,6 +58,7 @@
                         <th class="text-center">Código</th>
                         <th class="text-center">Nombre</th>
                         <th class="text-center">Año</th>
+                        <th class="text-center">Correlatividades</th>
                         <th class="text-center"></th>
                         <th class="text-center"></th>
                     </tr>
@@ -68,6 +69,17 @@
                         <td class="text-center">{{materia.codigo}}</td>
                         <td class="text-center">{{materia.nombre}}</td>
                         <td class="text-center">{{materia.año}}</td>
+                        
+                        {% if materia.get_correlatividades.count == 0 %}
+                            <td class="text-center">-</td>
+                        {% else %}
+                            <td class="text-center">
+                                {% for correlativa in materia.get_correlatividades %}
+                                    {{correlativa}}
+                                    <br>
+                                {% endfor %}
+                            </td>
+                        {% endif %}
                         <td class="text-center">Editar</td>
                         <td class="text-center text-danger">Eliminar</td>
                     </tr>
