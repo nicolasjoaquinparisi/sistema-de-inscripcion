@@ -22,17 +22,19 @@
 
     {% include 'admin/admin-nav-bar.html' %}
 
-    <div class="container-fluid shadow bg-white border p-3 w-25 mt-5">
+    <div class="container-fluid shadow bg-white border p-3 mt-5" style="width: 30%">
         <h3 class="mb-4">Alta de carrera</h3>
         <form method="POST">
             <input type="text" class="form-control" placeholder="Ingrese el nombre de la carrera">
             
             {% if materias.count > 0 %}
-                <div class="border p-2">
-                    <h4>Materias</h4>
+                <div class="border p-3 mt-3">
+                    <h4 class="mb-3">Materias</h4>
 
                     {% for materia in materias %}
-                        
+                        <input class="materia form-check-input" type="checkbox" value="">
+                        <label class="form-label">{{materia}}</label>
+                        <br>
                     {% endfor %}
                 </div>
             {% endif %}
@@ -43,6 +45,11 @@
             </div>
         </form>
     </div>
+    
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
+    <script src="{% static 'js/notifications.js' %}"></script>
+    
 </body>
 
 </html>

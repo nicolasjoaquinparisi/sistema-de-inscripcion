@@ -107,12 +107,17 @@ class Materia(BaseModel):
     codigo            = models.CharField(max_length=50, blank=False, unique=True, null=False)
     codigo_de_carrera = models.ForeignKey(Carrera, on_delete=models.SET_NULL, null=True)
     nombre            = models.CharField(max_length=150, blank=False)
+    año               = models.CharField(max_length=50, blank=False)
+
+    def __str__(self):
+        return f'({self.codigo}) {self.nombre}'
 
     @classmethod
-    def crear_materia(cls, data):
+    def crear_materia(cls, data, año):
         materia = Materia()
         materia.codigo = data['codigo']
         materia.nombre = data['nombre']
+        materia.año    = año
         materia.save()
         return materia
 
@@ -135,6 +140,11 @@ class Materia(BaseModel):
         if not cls.nombre_valido(nombre):
             return 'El nombre ingresado se encuentra en uso.'
         return 'Se ha producido un error.'
+
+
+class Correlatividades(BaseModel):
+    codigo_de_materia     = models.ForeignKey(Materia, on_delete=models.SET_NULL, null=True, related_name='codigo_de_materia')
+    codigo_de_correlativa = models.ForeignKey(Materia, on_delete=models.SET_NULL, null=True, related_name='codigo_de_correlativa')
 
 
 class MateriasInscriptas(BaseModel):

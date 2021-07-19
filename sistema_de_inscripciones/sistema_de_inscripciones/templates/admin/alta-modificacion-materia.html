@@ -22,14 +22,74 @@
 
     {% include 'admin/admin-nav-bar.html' %}
 
-    <div class="container-fluid shadow bg-white border p-3 w-25 mt-5">
+    <div class="container-fluid shadow bg-white border p-3 mt-5" style="width: 30%;">
         <h3 class="mb-4">Alta de materia</h3>
         <form method="POST">
             <label for="input-codigo">Código:</label>
             {{form.codigo}}
 
-            <label for="input-nombre">Nombre:</label>
+            <label class="mt-2" for="input-nombre">Nombre:</label>
             {{form.nombre}}
+
+            <hr>
+
+            <div>
+                <h5 class="mb-3">Año</h5>
+                
+                <div class="d-flex justify-content-center">
+                    <div class="form-check me-2">
+                        <input class="form-check-input" type="radio" value="Primer año" name="radio-button-año" id="primer-año">
+                        <label class="form-check-label" for="primer-año">
+                        Primero
+                        </label>
+                    </div>
+
+                    <div class="form-check me-2">
+                        <input class="form-check-input" type="radio" value="Segundo año" name="radio-button-año" id="segundo-año">
+                        <label class="form-check-label" for="segundo-año">
+                            Segundo
+                        </label>
+                    </div>
+
+                    <div class="form-check me-2">
+                        <input class="form-check-input" type="radio" value="Tercer año" name="radio-button-año" id="tercer-año">
+                        <label class="form-check-label" for="tercer-año">
+                            Tercero
+                        </label>
+                    </div>
+
+                    <div class="form-check me-2">
+                        <input class="form-check-input" type="radio" value="Cuarto año" name="radio-button-año" id="cuarto-año">
+                        <label class="form-check-label" for="cuarto-año">
+                            Cuarto
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" value="Quinto año" name="radio-button-año" id="quinto-año">
+                        <label class="form-check-label" for="quinto-año">
+                            Quinto
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            {% if materias.count > 0 %}
+                <hr>
+
+                <h5 class="mb-3">Correlatividades</h5>
+
+                {% for materia in materias %}
+                <div class="form-check">
+                    <input id={{materia}} class="materia form-check-input" type="checkbox" value="">
+                    <label for={{materia}} class="form-label">{{materia}}</label>
+                    <br>
+                </div>
+                {% endfor %}
+
+            {% endif %}
+
+            <hr>
 
             <div class="d-flex justify-content-end mt-3">
                 <a href="/listar-materias/" class="btn btn-secondary">Volver</a>
@@ -39,6 +99,11 @@
             {% csrf_token %}
         </form>
     </div>
+
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
+    <script src="{% static 'js/notifications.js' %}"></script>
+
 </body>
 
 </html>

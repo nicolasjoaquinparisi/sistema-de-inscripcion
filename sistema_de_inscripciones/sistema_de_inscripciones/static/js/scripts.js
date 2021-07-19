@@ -32,3 +32,6 @@ function setUpTime() {
     document.getElementById("fecha-1").innerHTML = `${currentDay} ${today.getDate()}`;
     document.getElementById("fecha-2").innerHTML = `${currentMonth} del ${today.getFullYear()}`;
 }
+
+
+// ALTA Y MODIFICACION MATERIAS

@@ -57,6 +57,9 @@
                     <tr>
                         <th class="text-center">Código</th>
                         <th class="text-center">Nombre</th>
+                        <th class="text-center">Año</th>
+                        <th class="text-center"></th>
+                        <th class="text-center"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,6 +67,9 @@
                     <tr>
                         <td class="text-center">{{materia.codigo}}</td>
                         <td class="text-center">{{materia.nombre}}</td>
+                        <td class="text-center">{{materia.año}}</td>
+                        <td class="text-center">Editar</td>
+                        <td class="text-center text-danger">Eliminar</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -72,6 +78,11 @@
     </div>
     {% endif %}
     </div>
+
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
+    <script src="{% static 'js/notifications.js' %}"></script>
+    
 </body>
 
 </html>
