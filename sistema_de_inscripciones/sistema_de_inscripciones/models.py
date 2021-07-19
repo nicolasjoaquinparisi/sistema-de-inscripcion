@@ -109,19 +109,28 @@ class Materia(BaseModel):
     codigo_de_carrera = models.ForeignKey(Carrera, on_delete=models.SET_NULL, null=True)
     nombre            = models.CharField(max_length=150, blank=False)
     año               = models.CharField(max_length=50, blank=False)
+    semestre          = models.CharField(max_length=30, blank=False)
 
     def __str__(self):
         return f'({self.codigo}) {self.nombre}'
+
+    @property
+    def duracion(self):
+        if self.semestre == "Primer semestre" or self.semestre == "Segundo semestre":
+            return "Semestral"
+        return "6 semanas"
     
     @property
     def get_correlatividades(self):
         correlativas = Correlatividades.find_all(models.Q(codigo_de_materia=self))
-        if len(correlativas) == 0:
-            return "-"
 
-        materias_correlativas = []
-        for c in correlativas:
-            materias_correlativas.append(c.codigo_de_correlativa)
+        if len(correlativas) == 0:
+            return " "
+
+        materias_correlativas = ''
+        for c in range(0, len(correlativas)-1):
+            materias_correlativas += f'{correlativas[c].codigo_de_correlativa.codigo}, '
+        materias_correlativas += correlativas[len(correlativas)-1].codigo_de_correlativa.codigo
 
         return materias_correlativas
 
@@ -133,7 +142,7 @@ class Materia(BaseModel):
     @classmethod
     def crear_correlativas(cls, materia, post):
         correlativas = []
-        for i in range(3, len(post)-1):
+        for i in range(4, len(post)-1):
             correlativas.append(post[i])
         
         for correlativa in correlativas:
@@ -141,11 +150,13 @@ class Materia(BaseModel):
             c = Correlatividades.crear_correlativa(materia, correlativa)
 
     @classmethod
-    def crear_materia(cls, data, año, post):
-        materia = Materia()
-        materia.codigo = data['codigo']
-        materia.nombre = data['nombre']
-        materia.año    = año
+    def crear_materia(cls, data, post):
+        materia           = Materia()
+        materia.codigo    = data['codigo']
+        materia.nombre    = data['nombre']
+        materia.año       = post.get('radio-button-año', 'value')
+        materia.semestre  = post.get('radio-button-semestre', 'value')
+        print(materia)
         materia.save()
 
         '''
@@ -153,7 +164,8 @@ class Materia(BaseModel):
         Si el request.POST tiene 4 elementos, entonces es porque no tiene correlativas la materia
         (El primer elemento es el codigo, el segundo, el nombre, el tercero, el año y el último el token)
         '''
-        if len(post) > 4:
+        post = list(post)
+        if len(post) > 5:
             cls.crear_correlativas(materia, post)
 
         return materia

@@ -58,6 +58,7 @@
                         <th class="text-center">Código</th>
                         <th class="text-center">Nombre</th>
                         <th class="text-center">Año</th>
+                        <th class="text-center">Duración</th>
                         <th class="text-center">Correlatividades</th>
                         <th class="text-center"></th>
                         <th class="text-center"></th>
@@ -69,15 +70,12 @@
                         <td class="text-center">{{materia.codigo}}</td>
                         <td class="text-center">{{materia.nombre}}</td>
                         <td class="text-center">{{materia.año}}</td>
-                        
+                        <td class="text-center">{{materia.duracion}}</td>
                         {% if materia.get_correlatividades.count == 0 %}
                             <td class="text-center">-</td>
                         {% else %}
                             <td class="text-center">
-                                {% for correlativa in materia.get_correlatividades %}
-                                    {{correlativa}}
-                                    <br>
-                                {% endfor %}
+                                {{ materia.get_correlatividades }}
                             </td>
                         {% endif %}
                         <td class="text-center">Editar</td>
