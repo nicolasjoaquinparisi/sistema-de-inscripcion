@@ -1,5 +1,6 @@
 :root {
-
+    --primary: #1d5aaa;
+    --light-primary: #367cd8;
 }
 
 body {
@@ -38,4 +39,44 @@ body {
 }
 .btn-xl:focus {
     outline: none;
+}
+
+.btn-link {
+    background-color: transparent;
+    border-color: transparent;
+    text-decoration: none;
+    padding: 0;
+}
+.btn-link:hover {
+    transform: scale(1.1);
+    -webkit-transform: scale(1.1);
+    -o-transform: scale(1.1);
+    -moz-transform: scale(1.1);
+}
+
+/* TABLE */
+.table-responsive.table--no-card {
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1);
+}
+
+.table-earning thead th {
+    background: var(--primary);
+    font-size: 16px;
+    color: #fff;
+    vertical-align: middle;
+    font-weight: 400;
+    text-transform: capitalize;
+    line-height: 1;
+    padding: 22px 40px;
+    white-space: nowrap;
+}
+
+.table-earning tbody td {
+    color: #808080;
+    white-space: nowrap;
 }

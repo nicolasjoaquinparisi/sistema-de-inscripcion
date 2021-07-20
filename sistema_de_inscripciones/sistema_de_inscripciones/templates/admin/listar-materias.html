@@ -29,63 +29,54 @@
     <br>
 
     {% if materias.count == 0 %}
-    <div id="mensaje" class="container p-4">
-        <div class="row">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-alert-circle" width="100"
-                height="100" viewBox="0 0 24 24" stroke-width="1.5" stroke="#9e9e9e" fill="none" stroke-linecap="round"
-                stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <circle cx="12" cy="12" r="9" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-        </div>
-        <div class="row">
-            <div class="d-flex justify-content-center text-center">
-                <h2 class="h2" style="color:#9e9e9e;">Actualmente no hay materias dadas de alta en el sistema.</h2>
+        <div id="mensaje" class="container p-4">
+            <div class="row">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-alert-circle" width="100"
+                    height="100" viewBox="0 0 24 24" stroke-width="1.5" stroke="#9e9e9e" fill="none" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <circle cx="12" cy="12" r="9" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+            </div>
+            <div class="row">
+                <div class="d-flex justify-content-center text-center">
+                    <h2 class="h2" style="color:#9e9e9e;">Actualmente no hay materias dadas de alta en el sistema.</h2>
+                </div>
             </div>
         </div>
-    </div>
-
     {% else %}
-
-
-    <div class="p-3 mb-5 rounded w-75 p-3 container my-4">
-        <div class="table-border table-responsive table--no-card m-b-30">
-            <table id="tabla" class="table table-borderless table-striped table-earning">
-                <thead>
-                    <tr>
-                        <th class="text-center">Código</th>
-                        <th class="text-center">Nombre</th>
-                        <th class="text-center">Año</th>
-                        <th class="text-center">Duración</th>
-                        <th class="text-center">Correlatividades</th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for materia in materias %}
-                    <tr>
-                        <td class="text-center">{{materia.codigo}}</td>
-                        <td class="text-center">{{materia.nombre}}</td>
-                        <td class="text-center">{{materia.año}}</td>
-                        <td class="text-center">{{materia.duracion}}</td>
-                        {% if materia.get_correlatividades.count == 0 %}
-                            <td class="text-center">-</td>
-                        {% else %}
-                            <td class="text-center">
-                                {{ materia.get_correlatividades }}
-                            </td>
-                        {% endif %}
-                        <td class="text-center">Editar</td>
-                        <td class="text-center text-danger">Eliminar</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="p-3 mb-5 rounded w-75 p-3 container my-4">
+            <div class="table-border table-responsive table--no-card m-b-30">
+                <table id="tabla" class="table table-borderless border table-striped table-earning">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Código</th>
+                            <th class="text-center">Nombre</th>
+                            <th class="text-center">Año</th>
+                            <th class="text-center">Duración</th>
+                            <th class="text-center">Correlatividades</th>
+                            <th class="text-center"></th>
+                            <th class="text-center"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for materia in materias %}
+                        <tr>
+                            <td class="text-center">{{materia.codigo}}</td>
+                            <td class="text-center">{{materia.nombre}}</td>
+                            <td class="text-center">{{materia.año}}</td>
+                            <td class="text-center">{{materia.duracion}}</td>
+                            <td class="text-center">{{ materia.get_correlatividades }}</td>
+                            <td><a class="text-center text-primary btn btn-link">Editar</a></td>
+                            <td><a class="text-center text-danger btn btn-link">Eliminar</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
     {% endif %}
     </div>
 

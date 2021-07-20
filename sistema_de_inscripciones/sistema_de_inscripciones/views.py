@@ -1,5 +1,5 @@
 from django.contrib import auth
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from sistema_de_inscripciones.forms import *
@@ -71,7 +71,7 @@ def alta_materia(request):
     if request.method == 'POST':
         form = AltaMateriaForm(request.POST)
 
-        validacion = form.validar_materia()
+        validacion           = form.validar_materia()
         resultado_validacion = validacion[0]
         mensaje_validaciones = validacion[1]
 
