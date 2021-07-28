@@ -25,16 +25,42 @@
     <div class="container-fluid shadow bg-white border p-3 mt-5" style="width: 30%">
         <h3 class="mb-4">Alta de carrera</h3>
         <form method="POST">
-            <input type="text" class="form-control" placeholder="Ingrese el nombre de la carrera">
+            <h5 for="input-nombre" class="form-label">Nombre</h5>
+            {{form.nombre}}
+
+            <h5 for="input-descripcion" class="form-label">Descripcion</h5>
+            {{form.descripcion}}
+
+            <div>
+                <h5 class="mb-3">Duración</h5>
+                
+                <div class="d-flex justify-content-center">
+                    <div class="form-check me-2">
+                        <input class="form-check-input" type="radio" value="Terciario" name="radio-button-año" id="terciario">
+                        <label class="form-check-label" for="terciario">
+                        Terciario
+                        </label>
+                    </div>
+
+                    <div class="form-check me-2">
+                        <input class="form-check-input" type="radio" value="Grado" name="radio-button-año" id="grado">
+                        <label class="form-check-label" for="grado">
+                            Grado
+                        </label>
+                    </div>
+                </div>
+            </div>
             
             {% if materias.count > 0 %}
                 <div class="border p-3 mt-3">
                     <h4 class="mb-3">Materias</h4>
 
                     {% for materia in materias %}
-                        <input class="materia form-check-input" type="checkbox" value="">
-                        <label class="form-label">{{materia}}</label>
+                    <div class="form-check">
+                        <input id="{{materia}}" class="materia form-check-input" name="{{materia}}" type="checkbox" onclick='onCheckBoxMateriaClick("{{materia}}")'>
+                        <label for="{{materia}}" class="form-label">{{materia}}</label>
                         <br>
+                    </div>
                     {% endfor %}
                 </div>
             {% endif %}
@@ -43,6 +69,8 @@
                 <a href="/listar-carreras/" class="btn btn-secondary">Volver</a>
                 <button class="btn btn-primary ms-2" type="submit">Aceptar</button>
             </div>
+
+            {% csrf_token %}
         </form>
     </div>
     

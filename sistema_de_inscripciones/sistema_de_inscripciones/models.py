@@ -101,7 +101,61 @@ class Alumno(User):
     
 
 class Carrera(BaseModel):
-    nombre = models.CharField(max_length=50, blank=False, unique=True)
+    nombre      = models.CharField(max_length=50, blank=False, unique=True)
+    descripcion = models.CharField(max_length=2000, blank=True)
+    año         = models.CharField(max_length=10, blank=False)
+
+    @classmethod
+    def nombre_valido(cls, nombre):
+        return cls.find_first(models.Q(nombre=nombre)) == None
+
+    @classmethod
+    def puede_dar_de_alta(cls, nombre):
+        return cls.nombre_valido(nombre)
+    
+    @classmethod
+    def get_mensaje_de_error(cls, nombre):
+        if not cls.nombre_valido(nombre):
+            return 'El nombre ingresado se encuentra en uso.'
+        return 'Se ha producido un error.'
+    
+    '''
+    Recibe el request.POST enviado desde la view
+    Genera una lista con todos los códigos de las correlativas seleccionadas
+    Crea las instancias de las correlativas de la materia dada de alta
+    '''
+    @classmethod
+    def get_materias(cls, post):
+        post = list(post)
+        materias = []
+        for i in range(3, len(post)-1):
+            materias.append(post[i])
+        return materias
+    
+    '''
+    Se crean las instancias correspondientes a las materias de la carrera
+    post = [nombre, descripcion, año,   TODAS LAS MATERIAS,         token]
+            0           1         2     a partir de pos = 3     post = length
+    '''
+    @classmethod
+    def asociar_materias(cls, carrera, materias):
+        for materia in materias:
+            materia = materia[materia.find("(")+1:materia.find(")")]
+            c = CarreraMaterias.crear_asociacion(carrera, materia)
+
+    @classmethod
+    def crear_carrera(cls, data, post):
+        carrera             = Carrera()
+        carrera.nombre      = data['nombre']
+        carrera.descripcion = data['descripcion']
+        carrera.año         = post['radio-button-año']
+        carrera.save()
+
+        "Se genera una lista con las referencias a las materias dadas de altas que se seleccionaron y se generan las asociaciones"
+        materias = cls.get_materias(post)
+        cls.asociar_materias(carrera, materias)
+
+        return carrera
 
 
 class Materia(BaseModel):
@@ -156,7 +210,6 @@ class Materia(BaseModel):
         materia.nombre    = data['nombre']
         materia.año       = post.get('radio-button-año', 'value')
         materia.semestre  = post.get('radio-button-semestre', 'value')
-        print(materia)
         materia.save()
 
         '''
@@ -205,6 +258,22 @@ class Correlatividades(BaseModel):
         correlativa.codigo_de_correlativa = materia
 
         correlativa.save()
+
+
+class CarreraMaterias(BaseModel):
+    carrera           = models.ForeignKey(Carrera, on_delete=models.SET_NULL, null=True)
+    codigo_de_materia = models.ForeignKey(Materia, on_delete=models.SET_NULL, null=True)
+
+    @classmethod
+    def crear_asociacion(cls, carrera, codigo):
+        asociacion = CarreraMaterias()
+
+        #Se busca la materia correlativa a partir del codigo obtenido
+        materia = Materia.find_first(models.Q(codigo=codigo))
+        
+        asociacion.carrera           = carrera
+        asociacion.codigo_de_materia = materia
+        asociacion.save()
 
 
 class MateriasInscriptas(BaseModel):

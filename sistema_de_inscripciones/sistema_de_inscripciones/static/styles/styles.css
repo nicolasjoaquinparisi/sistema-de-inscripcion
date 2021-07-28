@@ -18,8 +18,7 @@ body {
     padding: 1rem 2rem;
 }
 .nav-button:hover {
-    background-color: var(--bs-gray-dark);
-    color: var(--oscuro);
+    background-color: var(--light-primary);
     cursor: pointer;
 }
 

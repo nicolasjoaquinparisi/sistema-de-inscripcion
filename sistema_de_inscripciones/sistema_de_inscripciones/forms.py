@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db.models.fields import EmailField
 from django.forms import widgets
-from django.forms.widgets import Input
+from django.forms.widgets import Input, Textarea
 from django.utils.translation import gettext_lazy as _
 from django.forms import ModelForm, EmailInput, TextInput, Select, ChoiceField, DateInput, CharField, ModelChoiceField, \
     IntegerField
@@ -46,3 +46,28 @@ class AltaMateriaForm(ModelForm):
 
         self.is_valid()
         return True, 'Se dió de alta a la materia de forma exitosa'
+
+
+class AltaCarreraForm(ModelForm):
+    class Meta:
+        model = Carrera
+
+        fields = {'nombre', 'descripcion'}
+
+        widgets = {
+            'nombre'        : TextInput(attrs={'type': 'text', 'class': 'form-control mb-3', 'id' : 'input-nombre'
+                                        , 'placeholder' : 'Ingrese el nombre de la carrera', 'required': 'True'}),
+            'descripcion'   : Textarea(attrs={'type': 'text', 'class': 'form-control mb-3', 'id' : 'input-descripcion'
+                                        , 'placeholder' : 'Ingrese la descripcion de la carrera', 'required': 'True', 'size' :  '2000',
+                                        'rows': '3', 'style':'resize:none;'}),
+        }
+    
+    def puede_dar_de_alta(self):
+        return Carrera.puede_dar_de_alta(self.data['nombre'])
+
+    def validar_carrera(self):
+        if not self.puede_dar_de_alta():
+            return False, Carrera.get_mensaje_de_error(self.data['nombre'])
+
+        self.is_valid()
+        return True, 'Se dió de alta a la carrera de forma exitosa'

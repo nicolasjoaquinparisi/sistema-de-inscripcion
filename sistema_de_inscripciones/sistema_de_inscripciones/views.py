@@ -52,7 +52,27 @@ def alta_carrera(request):
     if not request.user.is_superuser:
         raise Http404
     
-    context = {'materias': Materia.find_all}
+    if request.method == 'POST':
+        form = AltaCarreraForm(request.POST)
+
+        validacion = form.validar_carrera()
+        resultado_validacion = validacion[0]
+        mensaje_validaciones = validacion[1]
+
+        response_data = {
+            'result': 'OK' if resultado_validacion else 'Error',
+            'message': mensaje_validaciones
+        }
+
+        if resultado_validacion:
+            data = form.cleaned_data
+            Carrera.crear_carrera(data, request.POST)
+        else:
+            context = {'form':form, 'materias':Materia.find_all()}
+
+        return HttpResponse(json.dumps(response_data))
+    else:
+        context = {'form':AltaCarreraForm(), 'materias':Materia.find_all()}
     return render(request, 'admin/alta-modificacion-carrera.html', context)
 
 

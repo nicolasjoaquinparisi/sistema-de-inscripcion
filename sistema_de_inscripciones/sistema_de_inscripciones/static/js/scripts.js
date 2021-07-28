@@ -35,7 +35,7 @@ function setUpTime() {
 
 
 // ALTA Y MODIFICACION MATERIAS
-function onCheckBoxCorrelativaClick(nombreCorrelativa)
+function onCheckBoxMateriaClick(nombreCorrelativa)
 {
     let checkBoxCorrelativa = document.getElementById(nombreCorrelativa);
     console.log(checkBoxCorrelativa);
