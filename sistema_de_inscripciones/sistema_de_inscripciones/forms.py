@@ -68,6 +68,6 @@ class AltaCarreraForm(ModelForm):
     def validar_carrera(self):
         if not self.puede_dar_de_alta():
             return False, Carrera.get_mensaje_de_error(self.data['nombre'])
-
+        print('Es válido')
         self.is_valid()
         return True, 'Se dió de alta a la carrera de forma exitosa'

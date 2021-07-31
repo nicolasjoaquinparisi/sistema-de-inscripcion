@@ -23,7 +23,8 @@
     {% include 'admin/admin-nav-bar.html' %}
 
     <div class="container-fluid">
-        <a class="me-3 btn btn-xl button-altas text-secondary" type="button" href="/alta-carrera">Dar de alta carrera</a>
+        <a class="me-3 btn btn-xl button-altas text-secondary" type="button" href="/alta-carrera">Dar de alta
+            carrera</a>
     </div>
 
     <br>
@@ -50,26 +51,39 @@
     {% else %}
 
 
-    <div class="p-3 mb-5 rounded w-50 p-3 container my-4">
-        <div class="table-border table-responsive table--no-card m-b-30">
-            <table id="tabla" class="table table-borderless table-striped table-earning">
-                <thead>
-                    <tr>
-                        <th class="text-center">Nombre</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for carrera in carreras %}
-                    <tr>
-                        <td class="text-center">{{carrera.nombre}}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="d-flex justify-content-evenly p-3 mb-5 rounded p-3 container my-4">
+        {% for carrera in carreras %}
+        <div class="card" style="width: 25rem;">
+            <div class="card-body" style="padding: 0;">
+                <div class="p-4 mb-3" style="background-color: var(--light-primary);">
+                    <h5 class="card-title text-center text-light">{{carrera.nombre}}</h5>
+                </div>
+
+                <h5 class="text-muted ms-4">{{carrera.año}}</h5>
+
+                <div class="overflow-auto p-2 mb-3" style="height: 20rem;">
+                    <p class="card-text ps-3 pe-3">{{carrera.descripcion}}</p>
+                </div>
+
+                <div class="ps-3 pe-3 pb-3 d-flex justify-content-between">
+                    <a href="/ver-carrera/{{carrera.id}}" class="text-primary btn btn-link">Ver</a>
+
+                    <div class="d-flex justify-content-end">
+                        <a class="text-primary btn btn-link">Editar</a>
+                        <button class="text-danger btn btn-link ms-3" onclick='onEliminarCarreraClick("{{carrera.pk}}")'>Eliminar</button>
+                    </div>
+                </div>
+            </div>
         </div>
+        {% endfor %}
+    </div>
     </div>
     {% endif %}
     </div>
 </body>
 
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{% static 'js/scripts.js' %}"></script>
+<script src="{% static 'js/notifications.js' %}"></script>
 </html>

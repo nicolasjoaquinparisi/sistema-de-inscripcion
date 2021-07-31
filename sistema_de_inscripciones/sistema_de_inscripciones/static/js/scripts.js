@@ -42,9 +42,38 @@ function onCheckBoxMateriaClick(nombreCorrelativa)
 
     if (checkBoxCorrelativa.checked)
     {
-        checkBoxCorrelativa.value = "True"
+        checkBoxCorrelativa.value = "True";
         return;
     }
 
-    checkBoxCorrelativa.value = "False"
+    checkBoxCorrelativa.value = "False";
+}
+
+function onSeleccionarTodasLasCorrelativasClick()
+{
+    let correlativas = document.getElementsByClassName("materia");
+
+    for (let i = 0; i < correlativas.length; i++) {
+        correlativas[i].checked = "True";
+        correlativas[i].value = "True";
+    }
+}
+
+
+function onEliminarCarreraClick(carreraID)
+{
+    $.ajax({
+        url: `/eliminar-carrera/${carreraID}`,
+        dataType: 'json',
+        success: function (data) {
+            showNotification(data.result, data.message);
+
+            if(data.result == "OK")
+            {
+                $(".swal2-confirm").click(function () {
+                    window.location.href = `/listar-carreras`;
+                });
+            }
+        }
+      });
 }

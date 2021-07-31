@@ -7,6 +7,9 @@ import json
 
 
 def index(request):
+    if request.user.is_authenticated:
+        return redirect('/home')
+
     if request.method == 'POST':
         user = auth.authenticate(dni=request.POST['dni'], password=request.POST['password'])
         if user is not None and user.is_active:
@@ -42,9 +45,27 @@ def home(request):
 
 @login_required
 def listar_carreras(request):
-    carreras = Carrera.find_all()
+    carreras = Carrera.find_all_actives()
     context = {'carreras':carreras}
     return render(request, 'admin/listar-carreras.html', context)
+
+
+@login_required
+def ver_carrera(request, carrera_id):
+    carrera = Carrera.find_carrera(carrera_id)
+    
+    materias_primer_año  = carrera.materias_de_año("Primer año")
+    materias_segundo_año = carrera.materias_de_año("Segundo año")
+    materias_tercer_año  = carrera.materias_de_año("Tercer año")
+
+    context = {'carrera':carrera, 'primero':materias_primer_año, 'segundo':materias_segundo_año,
+                'tercero':materias_tercer_año}
+    
+    if carrera.año == 'Grado':
+        context['cuarto'] = carrera.materias_de_año("Cuarto año")
+        context['quinto'] = carrera.materias_de_año("Quinto año")
+
+    return render(request, 'admin/ver-carrera.html', context)
 
 
 @login_required
@@ -54,7 +75,7 @@ def alta_carrera(request):
     
     if request.method == 'POST':
         form = AltaCarreraForm(request.POST)
-
+    
         validacion = form.validar_carrera()
         resultado_validacion = validacion[0]
         mensaje_validaciones = validacion[1]
@@ -66,19 +87,31 @@ def alta_carrera(request):
 
         if resultado_validacion:
             data = form.cleaned_data
+            print(data)
             Carrera.crear_carrera(data, request.POST)
         else:
-            context = {'form':form, 'materias':Materia.find_all()}
+            context = {'form':form, 'materias':Materia.find_all_actives()}
 
         return HttpResponse(json.dumps(response_data))
     else:
-        context = {'form':AltaCarreraForm(), 'materias':Materia.find_all()}
+        context = {'form':AltaCarreraForm(), 'materias':Materia.find_all_actives()}
     return render(request, 'admin/alta-modificacion-carrera.html', context)
 
 
 @login_required
+def eliminar_carrera(request, carrera_id):
+    carrera = Carrera.find_carrera(carrera_id)
+    carrera.eliminar()
+    response_data = {
+        'result': 'OK',
+        'message': "Se ha eliminado la carrera de forma exitosa"
+    }
+    return HttpResponse(json.dumps(response_data))
+
+
+@login_required
 def listar_materias(request):
-    materias = Materia.find_all()
+    materias = Materia.find_all_actives()
     context = {'materias':materias}
     return render(request, 'admin/listar-materias.html', context)
 
@@ -105,10 +138,10 @@ def alta_materia(request):
 
             Materia.crear_materia(data, request.POST)
         else:
-            context = {'form':form, 'materias':Materia.find_all()}
+            context = {'form':form, 'materias':Materia.find_all_actives()}
 
         return HttpResponse(json.dumps(response_data))
     else:
-        context = {'form':AltaMateriaForm(), 'materias':Materia.find_all()}
+        context = {'form':AltaMateriaForm(), 'materias':Materia.find_all_actives()}
     
     return render(request, 'admin/alta-modificacion-materia.html', context)

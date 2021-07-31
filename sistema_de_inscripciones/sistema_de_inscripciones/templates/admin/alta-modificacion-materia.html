@@ -22,7 +22,7 @@
 
     {% include 'admin/admin-nav-bar.html' %}
 
-    <div class="container-fluid shadow bg-white border p-3 mt-5" style="width: 30%;">
+    <div class="container-fluid shadow bg-white border p-3 mt-5" style="width: 40%;">
         <h3 class="mb-4">Alta de materia</h3>
         <form method="POST">
             <label for="input-codigo">Código:</label>
@@ -104,7 +104,10 @@
             {% if materias.count > 0 %}
                 <hr>
 
-                <h5 class="mb-3">Correlatividades</h5>
+                <div class="d-flex justify-content-between">
+                    <h5 class="mb-3">Correlatividades</h5>
+                    <input type="checkbox" onclick="onSeleccionarTodasLasCorrelativasClick()">
+                </div>
 
                 {% for materia in materias %}
                 <div class="form-check">
@@ -125,6 +128,7 @@
 
             {% csrf_token %}
         </form>
+        
     </div>
 
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>

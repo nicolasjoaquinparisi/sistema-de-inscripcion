@@ -64,7 +64,7 @@ body {
 }
 
 .table-earning thead th {
-    background: var(--primary);
+    background: var(--light-primary);
     font-size: 16px;
     color: #fff;
     vertical-align: middle;

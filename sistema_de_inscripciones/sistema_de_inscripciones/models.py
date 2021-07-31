@@ -50,7 +50,7 @@ class BaseModel(models.Model):
             self.save()
     
     @classmethod
-    def find_all(cls, qobject=None):
+    def find_all_actives(cls, qobject=None):
         if qobject:
             qobject &= models.Q(is_active=True)
         else:
@@ -60,7 +60,7 @@ class BaseModel(models.Model):
 
     @classmethod
     def find_first(cls, qobject=None):
-        query = cls.find_all(qobject)
+        query = cls.find_all_actives(qobject)
         if query.exists():
             instance = query.first()
         else:
@@ -71,6 +71,10 @@ class BaseModel(models.Model):
     @classmethod
     def find_pk(cls, pk):
         return cls.find_first(models.Q(pk=pk))
+    
+    @classmethod
+    def find_all(cls, qobject):
+        return cls.objects.filter(qobject)
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
@@ -105,9 +109,33 @@ class Carrera(BaseModel):
     descripcion = models.CharField(max_length=2000, blank=True)
     año         = models.CharField(max_length=10, blank=False)
 
+    @property
+    def materias(self):
+        return CarreraMaterias.get_materias(self)
+    
+    def materias_de_año(self, año):
+        materias = self.materias
+
+        materias_año = []
+        for materia in materias:
+            if materia.año == año:
+                materias_año.append(materia)
+
+        return materias_año
+    
+    def eliminar(self):
+        self.is_active = False
+        self.save()
+
     @classmethod
     def nombre_valido(cls, nombre):
-        return cls.find_first(models.Q(nombre=nombre)) == None
+        carrera = Carrera.objects.filter(nombre=nombre).first()
+                
+        if carrera and carrera.is_active == False:
+            Carrera.find_all(models.Q(nombre=nombre)).delete()
+            return True
+
+        return False        
 
     @classmethod
     def puede_dar_de_alta(cls, nombre):
@@ -140,12 +168,14 @@ class Carrera(BaseModel):
     @classmethod
     def asociar_materias(cls, carrera, materias):
         for materia in materias:
-            materia = materia[materia.find("(")+1:materia.find(")")]
+            codigo  = materia[materia.find("(")+1:materia.find(")")]
+            materia = Materia.find_first(models.Q(codigo=codigo))
             c = CarreraMaterias.crear_asociacion(carrera, materia)
 
     @classmethod
     def crear_carrera(cls, data, post):
         carrera             = Carrera()
+        print(data)
         carrera.nombre      = data['nombre']
         carrera.descripcion = data['descripcion']
         carrera.año         = post['radio-button-año']
@@ -156,11 +186,14 @@ class Carrera(BaseModel):
         cls.asociar_materias(carrera, materias)
 
         return carrera
+    
+    @classmethod
+    def find_carrera(cls, carrera_id):
+        return Carrera.find_pk(carrera_id)
 
 
 class Materia(BaseModel):
     codigo            = models.CharField(max_length=50, blank=False, unique=True, null=False)
-    codigo_de_carrera = models.ForeignKey(Carrera, on_delete=models.SET_NULL, null=True)
     nombre            = models.CharField(max_length=150, blank=False)
     año               = models.CharField(max_length=50, blank=False)
     semestre          = models.CharField(max_length=30, blank=False)
@@ -176,7 +209,7 @@ class Materia(BaseModel):
     
     @property
     def get_correlatividades(self):
-        correlativas = Correlatividades.find_all(models.Q(codigo_de_materia=self))
+        correlativas = Correlatividades.find_all_actives(models.Q(codigo_de_materia=self))
 
         if len(correlativas) == 0:
             return " "
@@ -261,26 +294,32 @@ class Correlatividades(BaseModel):
 
 
 class CarreraMaterias(BaseModel):
-    carrera           = models.ForeignKey(Carrera, on_delete=models.SET_NULL, null=True)
-    codigo_de_materia = models.ForeignKey(Materia, on_delete=models.SET_NULL, null=True)
+    carrera = models.ForeignKey(Carrera, on_delete=models.SET_NULL, null=True)
+    materia = models.ForeignKey(Materia, on_delete=models.SET_NULL, null=True)
 
     @classmethod
-    def crear_asociacion(cls, carrera, codigo):
+    def crear_asociacion(cls, carrera, materia):
         asociacion = CarreraMaterias()
-
-        #Se busca la materia correlativa a partir del codigo obtenido
-        materia = Materia.find_first(models.Q(codigo=codigo))
-        
-        asociacion.carrera           = carrera
-        asociacion.codigo_de_materia = materia
+        asociacion.carrera = carrera
+        asociacion.materia = materia
         asociacion.save()
+    
+    @classmethod
+    def get_materias(cls, carrera):
+        materias_de_la_carrera = CarreraMaterias.find_all_actives(models.Q(carrera=carrera)).all()
+
+        materias = []
+        for instancia in materias_de_la_carrera:
+            materias.append(instancia.materia)
+
+        return materias
 
 
 class MateriasInscriptas(BaseModel):
-    alumno            = models.ForeignKey(Alumno, on_delete=models.SET_NULL, null=True)
-    codigo_de_materia = models.ForeignKey(Materia, on_delete=models.SET_NULL, null=True)
+    alumno  = models.ForeignKey(Alumno, on_delete=models.SET_NULL, null=True)
+    materia = models.ForeignKey(Materia, on_delete=models.SET_NULL, null=True)
 
 
 class MateriasAprobadas(BaseModel):
-    alumno            = models.ForeignKey(Alumno, on_delete=models.SET_NULL, null=True)
-    codigo_de_materia = models.ForeignKey(Materia, on_delete=models.SET_NULL, null=True)
+    alumno  = models.ForeignKey(Alumno, on_delete=models.SET_NULL, null=True)
+    materia = models.ForeignKey(Materia, on_delete=models.SET_NULL, null=True)
