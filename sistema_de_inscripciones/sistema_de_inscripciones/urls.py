@@ -25,6 +25,7 @@ urlpatterns = [
 
     path('listar-carreras/', listar_carreras),
     path('alta-carrera/', alta_carrera),
+    path('editar-carrera/<int:carrera_id>', editar_carrera),
     path('ver-carrera/<int:carrera_id>', ver_carrera),
     path('eliminar-carrera/<int:carrera_id>', eliminar_carrera),
 

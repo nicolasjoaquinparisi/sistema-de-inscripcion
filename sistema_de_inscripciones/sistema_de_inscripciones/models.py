@@ -109,6 +109,75 @@ class Carrera(BaseModel):
     descripcion = models.CharField(max_length=2000, blank=True)
     año         = models.CharField(max_length=10, blank=False)
 
+    '''
+    Se crean las instancias correspondientes a las materias de la carrera
+    post = [nombre, descripcion, año,   TODAS LAS MATERIAS,         token]
+            0           1         2     a partir de pos = 3     post = length
+    '''
+    @classmethod
+    def asociar_materias(cls, carrera, materias):
+        for materia in materias:
+            codigo  = materia[materia.find("(")+1:materia.find(")")]
+            materia = Materia.find_first(models.Q(codigo=codigo))
+            c = CarreraMaterias.crear_asociacion(carrera, materia)
+
+    @classmethod
+    def crear_carrera(cls, post):
+        carrera             = Carrera()
+        carrera.nombre      = post['nombre']
+        carrera.descripcion = post['descripcion']
+        carrera.año         = post['radio-button-año']
+        carrera.save()
+
+        "Se genera una lista con las referencias a las materias dadas de altas que se seleccionaron y se generan las asociaciones"
+        materias = cls.get_materias(post)
+        cls.asociar_materias(carrera, materias)
+
+        return carrera
+    
+    @classmethod
+    def nombre_valido(cls, nombre):
+        existe = Carrera.objects.filter(nombre=nombre).exists()
+        if not existe:
+            return True
+
+        carrera = Carrera.objects.filter(nombre=nombre).first()
+        if carrera and carrera.is_active == False:
+            Carrera.find_all(models.Q(nombre=nombre)).delete()
+            return True
+
+        return False
+    
+    @classmethod
+    def get_mensaje_de_error(cls, nombre):
+        if not cls.nombre_valido(nombre):
+            return 'El nombre ingresado se encuentra en uso.'
+        return 'Se ha producido un error.'
+    
+    @classmethod
+    def validar_carrera(cls, nombre):
+        if cls.nombre_valido(nombre):
+            return True, 'Se dió de alta a la carrera de forma exitosa'
+        return False, Carrera.get_mensaje_de_error(nombre)
+        
+    
+    '''
+    Recibe el request.POST enviado desde la view
+    Genera una lista con todos los códigos de las correlativas seleccionadas
+    Crea las instancias de las correlativas de la materia dada de alta
+    '''
+    @classmethod
+    def get_materias(cls, post):
+        post = list(post)
+        materias = []
+        for i in range(3, len(post)-1):
+            materias.append(post[i])
+        return materias
+    
+    @classmethod
+    def find_carrera(cls, carrera_id):
+        return Carrera.find_pk(carrera_id)
+
     @property
     def materias(self):
         return CarreraMaterias.get_materias(self)
@@ -126,70 +195,6 @@ class Carrera(BaseModel):
     def eliminar(self):
         self.is_active = False
         self.save()
-
-    @classmethod
-    def nombre_valido(cls, nombre):
-        carrera = Carrera.objects.filter(nombre=nombre).first()
-                
-        if carrera and carrera.is_active == False:
-            Carrera.find_all(models.Q(nombre=nombre)).delete()
-            return True
-
-        return False        
-
-    @classmethod
-    def puede_dar_de_alta(cls, nombre):
-        return cls.nombre_valido(nombre)
-    
-    @classmethod
-    def get_mensaje_de_error(cls, nombre):
-        if not cls.nombre_valido(nombre):
-            return 'El nombre ingresado se encuentra en uso.'
-        return 'Se ha producido un error.'
-    
-    '''
-    Recibe el request.POST enviado desde la view
-    Genera una lista con todos los códigos de las correlativas seleccionadas
-    Crea las instancias de las correlativas de la materia dada de alta
-    '''
-    @classmethod
-    def get_materias(cls, post):
-        post = list(post)
-        materias = []
-        for i in range(3, len(post)-1):
-            materias.append(post[i])
-        return materias
-    
-    '''
-    Se crean las instancias correspondientes a las materias de la carrera
-    post = [nombre, descripcion, año,   TODAS LAS MATERIAS,         token]
-            0           1         2     a partir de pos = 3     post = length
-    '''
-    @classmethod
-    def asociar_materias(cls, carrera, materias):
-        for materia in materias:
-            codigo  = materia[materia.find("(")+1:materia.find(")")]
-            materia = Materia.find_first(models.Q(codigo=codigo))
-            c = CarreraMaterias.crear_asociacion(carrera, materia)
-
-    @classmethod
-    def crear_carrera(cls, data, post):
-        carrera             = Carrera()
-        print(data)
-        carrera.nombre      = data['nombre']
-        carrera.descripcion = data['descripcion']
-        carrera.año         = post['radio-button-año']
-        carrera.save()
-
-        "Se genera una lista con las referencias a las materias dadas de altas que se seleccionaron y se generan las asociaciones"
-        materias = cls.get_materias(post)
-        cls.asociar_materias(carrera, materias)
-
-        return carrera
-    
-    @classmethod
-    def find_carrera(cls, carrera_id):
-        return Carrera.find_pk(carrera_id)
 
 
 class Materia(BaseModel):

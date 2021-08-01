@@ -74,9 +74,9 @@ def alta_carrera(request):
         raise Http404
     
     if request.method == 'POST':
-        form = AltaCarreraForm(request.POST)
-    
-        validacion = form.validar_carrera()
+        post = request.POST
+
+        validacion = Carrera.validar_carrera(post['nombre'])
         resultado_validacion = validacion[0]
         mensaje_validaciones = validacion[1]
 
@@ -86,15 +86,20 @@ def alta_carrera(request):
         }
 
         if resultado_validacion:
-            data = form.cleaned_data
-            print(data)
-            Carrera.crear_carrera(data, request.POST)
+            Carrera.crear_carrera(post)
         else:
-            context = {'form':form, 'materias':Materia.find_all_actives()}
+            context = {'materias':Materia.find_all_actives()}
 
         return HttpResponse(json.dumps(response_data))
     else:
-        context = {'form':AltaCarreraForm(), 'materias':Materia.find_all_actives()}
+        context = {'materias':Materia.find_all_actives()}
+    return render(request, 'admin/alta-modificacion-carrera.html', context)
+
+
+@login_required
+def editar_carrera(request, carrera_id):
+    carrera = Carrera.find_carrera(carrera_id)
+    context = {'carrera': carrera, 'materias': Materia.find_all_actives()}
     return render(request, 'admin/alta-modificacion-carrera.html', context)
 
 

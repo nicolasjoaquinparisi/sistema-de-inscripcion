@@ -77,3 +77,13 @@ function onEliminarCarreraClick(carreraID)
         }
       });
 }
+
+function initializeEditarCarrera(duracion, materias)
+{
+    if (duracion === "Grado")
+        document.getElementById("grado").checked = "True";
+    else
+        document.getElementById("terciario").checked = "True";
+        
+    console.log(duracion);
+}

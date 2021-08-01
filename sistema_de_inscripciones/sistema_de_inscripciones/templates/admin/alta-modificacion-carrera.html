@@ -16,7 +16,7 @@
     <title>Carreras</title>
 </head>
 
-<body>
+<body onload='initializeEditarCarrera("{{carrera.año}}","{{carrera.materias}}")';>
 
     {% include 'bases/header.html' %}
 
@@ -26,11 +26,13 @@
         <h3 class="mb-4">Alta de carrera</h3>
         <form method="POST">
             <h5 for="input-nombre" class="form-label">Nombre</h5>
-            {{form.nombre}}
+            <input type="text" class="form-control mb-3" id="input-nombre" required="True" 
+            placeholder="Ingrese el nombre de la carrera" name="nombre" value="{{carrera.nombre}}">
 
             <h5 for="input-descripcion" class="form-label">Descripcion</h5>
-            {{form.descripcion}}
-
+            <textarea class="form-control mb-3" placeholder="Ingrese la descripción de la carrera" 
+            id="input-descripcion" name="descripcion" required="True" size="2000" rows="3" style="resize: none;">{{carrera.descripcion}}</textarea>
+            
             <div>
                 <h5 class="mb-3">Duración</h5>
                 
