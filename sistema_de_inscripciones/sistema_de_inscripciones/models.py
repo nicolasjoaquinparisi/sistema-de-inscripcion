@@ -44,11 +44,6 @@ class BaseModel(models.Model):
     
     is_active = models.BooleanField(default=True)
     
-    def delete(self):
-        if self.is_active:
-            self.is_active = False
-            self.save()
-    
     @classmethod
     def find_all_actives(cls, qobject=None):
         if qobject:
@@ -75,7 +70,22 @@ class BaseModel(models.Model):
     @classmethod
     def find_all(cls, qobject):
         return cls.objects.filter(qobject)
+    
+    def delete(self):
+        self.is_active = False
+        self.save()
 
+    @classmethod
+    def validar(cls):
+        raise NotImplementedError
+    
+    @classmethod
+    def get_mensaje_de_error(cls):
+        raise NotImplementedError
+
+    @classmethod
+    def get_mensaje_de_error_modificacion(cls):
+        raise NotImplementedError
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     dni              = models.IntegerField(unique=True)
@@ -137,7 +147,7 @@ class Carrera(BaseModel):
 
     ''' Validaciones - Inicio'''
     @classmethod
-    def validar_carrera(cls, nombre):
+    def validar(cls, nombre):
         if cls.nombre_valido(nombre):
             return True, 'Se dió de alta a la carrera de forma exitosa'
         return False, Carrera.get_mensaje_de_error(nombre)
@@ -194,10 +204,6 @@ class Carrera(BaseModel):
                 materias_año.append(materia)
 
         return materias_año
-    
-    def eliminar(self):
-        self.is_active = False
-        self.save()
 
 
 class Materia(BaseModel):
@@ -246,14 +252,23 @@ class Materia(BaseModel):
     
     ''' Validaciones - Inicio '''
     @classmethod
-    def validar_materia(cls, codigo, nombre):
+    def validar(cls, codigo, nombre):
         if cls.puede_dar_de_alta(codigo, nombre):
             return True, 'Se dió de alta a la materia de forma exitosa'
         return False, Materia.get_mensaje_de_error(codigo, nombre) 
 
     @classmethod
     def puede_dar_de_alta(cls, codigo, nombre):
-        return cls.codigo_valido(codigo) and cls.nombre_valido(nombre)
+        existe = cls.objects.filter(codigo=codigo).exists()
+        if not existe:
+            return True
+        else:
+            materia = cls.objects.filter(codigo=codigo).first()
+            if materia.is_active == False:
+                cls.find_all(models.Q(codigo=codigo)).delete()
+                return True
+
+        return False
     
     @classmethod
     def codigo_valido(cls, codigo):
@@ -270,8 +285,73 @@ class Materia(BaseModel):
         if not cls.nombre_valido(nombre):
             return 'El nombre ingresado se encuentra en uso.'
         return 'Se ha producido un error.'
+    
 
-    ''' Validaciones - Fin ''' 
+    def validar_modificacion(self, codigo, nombre):
+        validaciones = {'codigo' : self.validar_modificacion_codigo(codigo),
+                        'nombre' : self.validar_modificacion_nombre(nombre)}
+        
+        if not validaciones['codigo']:
+            return False, 'El código ingresado pertenece a otra materia'
+
+        if not validaciones['nombre']:
+            return False, 'El nombre ingresado pertenece a otra materia'
+        
+        return True, 'Se realizó la modificación de la materia de forma exitosa'
+    
+    def validar_modificacion_codigo(self, codigo):
+        #Si es la misma materia
+        print(self.codigo)
+        print(codigo)
+
+        if self.codigo == codigo:
+            return True
+        
+        existe = Materia.objects.filter(codigo=codigo).exists()
+        if existe:
+            materia = Materia.objects.filter(codigo=codigo).first()
+
+            #Si es la misma materia
+            if materia.pk == self.pk:
+                return True
+
+            #Si hay una materia dada de baja lógicamente con el mismo código
+            if materia.is_active == False:
+                Materia.objects.filter(codigo=codigo).delete()
+                return True
+            else:
+                return False
+
+        return True
+    
+    def validar_modificacion_nombre(self, nombre):
+        print(self.nombre)
+        print(nombre)
+        if self.nombre == nombre:
+            return True
+
+        existe = Materia.objects.filter(nombre=nombre).exists()
+        print(existe)
+        if existe:
+            materia = Materia.objects.filter(nombre=nombre).first()
+
+            #Si es la misma materia
+            if materia.pk == self.pk:
+                return True
+
+            if materia.is_active == False:
+                Materia.objects.filter(nombre=nombre).delete()
+                return True
+            else:
+                return False
+
+        return True
+
+    ''' Validaciones - Fin '''
+    
+    @classmethod
+    def get_materia(cls, materia_id):
+        return Materia.find_pk(materia_id)
     
     @property
     def duracion(self):
@@ -292,6 +372,22 @@ class Materia(BaseModel):
         materias_correlativas += correlativas[len(correlativas)-1].codigo_de_correlativa.codigo
 
         return materias_correlativas
+    
+    def get_correlativas(self):
+        materias = Correlatividades.get_correlativas_de_materia(self)
+        
+        materias_formateadas = []
+        for materia in materias:
+            materias_formateadas.append(materia.codigo)
+        
+        return materias_formateadas
+    
+    def modificar(self, codigo, nombre, año, semestre):
+        self.codigo   = codigo
+        self.nombre   = nombre
+        self.año      = año
+        self.semestre = semestre
+        self.save()
 
 
 class Correlatividades(BaseModel):
@@ -308,7 +404,14 @@ class Correlatividades(BaseModel):
         correlativa.codigo_de_correlativa = materia
 
         correlativa.save()
-
+    
+    @classmethod
+    def get_correlativas_de_materia(cls, materia):
+        instancias = cls.find_all_actives(models.Q(codigo_de_materia=materia))
+        materias = []
+        for instancia in instancias:
+            materias.append(Materia.find_pk(instancia.codigo_de_correlativa.pk))
+        return materias
 
 class CarreraMaterias(BaseModel):
     carrera = models.ForeignKey(Carrera, on_delete=models.SET_NULL, null=True)

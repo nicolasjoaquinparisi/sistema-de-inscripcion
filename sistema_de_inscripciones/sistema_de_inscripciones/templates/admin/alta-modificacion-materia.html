@@ -16,7 +16,7 @@
     <title>Carreras</title>
 </head>
 
-<body>
+<body onload='initializeEditarMateria("{{materia.año}}", "{{materia.semestre}}", "{{correlativas}}")'>
 
     {% include 'bases/header.html' %}
 
@@ -27,12 +27,12 @@
         <form method="POST">
             <label for="input-codigo">Código:</label>
             <input type="text" id="input-codigo" class="form-control" name="input-codigo" 
-            placeholder="Ingrese el codigo de la materia" required="True">
+            placeholder="Ingrese el codigo de la materia" required="True" value="{{materia.codigo}}">
 
             <label class="mt-2" for="input-nombre">Nombre:</label>
             <input type="text" id="input-nombre" class="form-control" name="input-nombre" 
-            placeholder="Ingrese el nombre de la materia" required="True">
-
+            placeholder="Ingrese el nombre de la materia" required="True" value="{{materia.nombre}}">
+            
             <hr>
 
             <div>
@@ -113,8 +113,8 @@
 
                 {% for materia in materias %}
                 <div class="form-check">
-                    <input id="{{materia}}" class="materia form-check-input" name="{{materia}}" type="checkbox" onclick='onCheckBoxMateriaClick("{{materia}}")'>
-                    <label for="{{materia}}" class="form-label">{{materia}}</label>
+                    <input id="{{materia.codigo}}" class="materia form-check-input" name="{{materia}}" type="checkbox" onclick='onCheckBoxMateriaClick("{{materia}}")'>
+                    <label for="{{materia.codigo}}" class="form-label">{{materia}}</label>
                     <br>
                 </div>
                 {% endfor %}

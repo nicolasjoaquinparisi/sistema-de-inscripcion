@@ -69,8 +69,8 @@
                             <td class="text-center">{{materia.año}}</td>
                             <td class="text-center">{{materia.duracion}}</td>
                             <td class="text-center">{{ materia.get_correlatividades }}</td>
-                            <td><a class="text-center text-primary btn btn-link">Editar</a></td>
-                            <td><a class="text-center text-danger btn btn-link">Eliminar</a></td>
+                            <td><a href="/modificar-materia/{{materia.id}}" class="text-center text-primary btn btn-link">Editar</a></td>
+                            <td><button class="text-danger btn btn-link ms-3" onclick='onEliminarMateriaClick("{{materia.pk}}")'>Eliminar</button></td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -80,6 +80,7 @@
     {% endif %}
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{% static 'js/scripts.js' %}"></script>
     <script src="{% static 'js/notifications.js' %}"></script>

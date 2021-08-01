@@ -76,7 +76,7 @@ def alta_carrera(request):
     if request.method == 'POST':
         post = request.POST
 
-        validacion = Carrera.validar_carrera(post['nombre'])
+        validacion = Carrera.validar(post['nombre'])
         resultado_validacion = validacion[0]
         mensaje_validaciones = validacion[1]
 
@@ -106,7 +106,7 @@ def editar_carrera(request, carrera_id):
 @login_required
 def eliminar_carrera(request, carrera_id):
     carrera = Carrera.find_carrera(carrera_id)
-    carrera.eliminar()
+    carrera.delete()
     response_data = {
         'result': 'OK',
         'message': "Se ha eliminado la carrera de forma exitosa"
@@ -129,7 +129,7 @@ def alta_materia(request):
     if request.method == 'POST':
         post = request.POST
 
-        validacion           = Materia.validar_materia(post['input-codigo'], post['input-nombre'])
+        validacion           = Materia.validar(post['input-codigo'], post['input-nombre'])
         resultado_validacion = validacion[0]
         mensaje_validaciones = validacion[1]
 
@@ -148,3 +148,40 @@ def alta_materia(request):
         context = {'materias':Materia.find_all_actives()}
     
     return render(request, 'admin/alta-modificacion-materia.html', context)
+
+
+def modificar_materia(request, materia_id):
+    materia = Materia.get_materia(materia_id)
+
+    if request.method == 'POST':
+        post = request.POST
+
+        validacion = materia.validar_modificacion(post['input-codigo'], post['input-nombre'])
+        resultado_validacion = validacion[0]
+        mensaje_validaciones = validacion[1]
+
+        response_data = {
+            'result': 'OK' if resultado_validacion else 'Error',
+            'message': mensaje_validaciones
+        }
+
+        if resultado_validacion:
+            materia.modificar(post['input-codigo'], post['input-nombre'], 
+                            post.get('radio-button-año', 'value'), post.get('radio-button-semestre', 'value'))
+        else:
+            context = {'materias':Materia.find_all_actives()}
+        
+        return HttpResponse(json.dumps(response_data))
+    else:
+        context = {'materia': materia, 'correlativas': materia.get_correlativas, 'materias':Materia.find_all_actives()}
+    
+    return render(request, 'admin/alta-modificacion-materia.html', context)
+
+def eliminar_materia(request, materia_id):
+    materia = Materia.get_materia(materia_id)
+    materia.delete()
+    response_data = {
+        'result': 'OK',
+        'message': "Se ha eliminado la materia de forma exitosa"
+    }
+    return HttpResponse(json.dumps(response_data))

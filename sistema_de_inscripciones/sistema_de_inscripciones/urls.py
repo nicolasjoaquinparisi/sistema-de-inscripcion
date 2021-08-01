@@ -31,4 +31,6 @@ urlpatterns = [
 
     path('listar-materias/', listar_materias),
     path('alta-materia/', alta_materia),
+    path('modificar-materia/<int:materia_id>', modificar_materia),
+    path('eliminar-materia/<int:materia_id>', eliminar_materia),
 ]

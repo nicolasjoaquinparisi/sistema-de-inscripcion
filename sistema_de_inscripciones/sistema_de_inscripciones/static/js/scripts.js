@@ -38,7 +38,6 @@ function setUpTime() {
 function onCheckBoxMateriaClick(nombreCorrelativa)
 {
     let checkBoxCorrelativa = document.getElementById(nombreCorrelativa);
-    console.log(checkBoxCorrelativa);
 
     if (checkBoxCorrelativa.checked)
     {
@@ -78,6 +77,24 @@ function onEliminarCarreraClick(carreraID)
       });
 }
 
+function onEliminarMateriaClick(materiaID)
+{
+    $.ajax({
+        url: `/eliminar-materia/${materiaID}`,
+        dataType: 'json',
+        success: function (data) {
+            showNotification(data.result, data.message);
+
+            if(data.result == "OK")
+            {
+                $(".swal2-confirm").click(function () {
+                    window.location.href = `/listar-materias`;
+                });
+            }
+        }
+      });
+}
+
 function initializeEditarCarrera(duracion, materias)
 {
     if (duracion === "Grado")
@@ -86,4 +103,48 @@ function initializeEditarCarrera(duracion, materias)
         document.getElementById("terciario").checked = "True";
         
     console.log(duracion);
+}
+
+function initializeEditarMateria(año, semestre, materias)
+{
+    let codigos = materias.split(/['']/);
+    codigos.forEach(element => {
+        if (element != "[" & element != "]" & element != ", " & element != "[]")
+        {
+            document.getElementById(element).checked = "True";
+            document.getElementById(element).value = "True";
+        }
+    });
+    
+    switch (año)
+    {
+        case "Primer año":
+            document.getElementById("primer-año").checked = "True";
+            break;
+        case "Segundo año":
+            document.getElementById("segundo-año").checked = "True";
+            break;
+        case "Tercer año":
+            document.getElementById("tercero-año").checked = "True";
+            break;
+        case "Cuarto año":
+            document.getElementById("cuarto-año").checked = "True";
+            break;
+        case "Quinto año":
+            document.getElementById("quinto-año").checked = "True";
+            break;
+    }
+
+    switch (semestre)
+    {
+        case "Curso de ingreso":
+            document.getElementById("curso-de-ingreso").checked = "True";
+            break;
+        case "Primer semestre":
+            document.getElementById("primer-semestre").checked = "True";
+            break;
+        case "Segundo semestre":
+            document.getElementById("segundo-semestre").checked = "True";
+            break;
+    }
 }
