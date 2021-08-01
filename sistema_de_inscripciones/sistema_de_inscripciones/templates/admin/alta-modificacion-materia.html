@@ -26,10 +26,12 @@
         <h3 class="mb-4">Alta de materia</h3>
         <form method="POST">
             <label for="input-codigo">Código:</label>
-            {{form.codigo}}
+            <input type="text" id="input-codigo" class="form-control" name="input-codigo" 
+            placeholder="Ingrese el codigo de la materia" required="True">
 
             <label class="mt-2" for="input-nombre">Nombre:</label>
-            {{form.nombre}}
+            <input type="text" id="input-nombre" class="form-control" name="input-nombre" 
+            placeholder="Ingrese el nombre de la materia" required="True">
 
             <hr>
 

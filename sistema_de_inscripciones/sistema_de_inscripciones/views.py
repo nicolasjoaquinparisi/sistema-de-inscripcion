@@ -127,9 +127,9 @@ def alta_materia(request):
         raise Http404
     
     if request.method == 'POST':
-        form = AltaMateriaForm(request.POST)
+        post = request.POST
 
-        validacion           = form.validar_materia()
+        validacion           = Materia.validar_materia(post['input-codigo'], post['input-nombre'])
         resultado_validacion = validacion[0]
         mensaje_validaciones = validacion[1]
 
@@ -139,14 +139,12 @@ def alta_materia(request):
         }
 
         if resultado_validacion:
-            data = form.cleaned_data
-
-            Materia.crear_materia(data, request.POST)
+            Materia.crear_materia(post)
         else:
-            context = {'form':form, 'materias':Materia.find_all_actives()}
+            context = {'materias':Materia.find_all_actives()}
 
         return HttpResponse(json.dumps(response_data))
     else:
-        context = {'form':AltaMateriaForm(), 'materias':Materia.find_all_actives()}
+        context = {'materias':Materia.find_all_actives()}
     
     return render(request, 'admin/alta-modificacion-materia.html', context)

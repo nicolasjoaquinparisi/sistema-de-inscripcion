@@ -109,18 +109,6 @@ class Carrera(BaseModel):
     descripcion = models.CharField(max_length=2000, blank=True)
     año         = models.CharField(max_length=10, blank=False)
 
-    '''
-    Se crean las instancias correspondientes a las materias de la carrera
-    post = [nombre, descripcion, año,   TODAS LAS MATERIAS,         token]
-            0           1         2     a partir de pos = 3     post = length
-    '''
-    @classmethod
-    def asociar_materias(cls, carrera, materias):
-        for materia in materias:
-            codigo  = materia[materia.find("(")+1:materia.find(")")]
-            materia = Materia.find_first(models.Q(codigo=codigo))
-            c = CarreraMaterias.crear_asociacion(carrera, materia)
-
     @classmethod
     def crear_carrera(cls, post):
         carrera             = Carrera()
@@ -135,6 +123,25 @@ class Carrera(BaseModel):
 
         return carrera
     
+    '''
+    Se crean las instancias correspondientes a las materias de la carrera
+    post = [nombre, descripcion, año,   TODAS LAS MATERIAS,         token]
+            0           1         2     a partir de pos = 3     post = length
+    '''
+    @classmethod
+    def asociar_materias(cls, carrera, materias):
+        for materia in materias:
+            codigo  = materia[materia.find("(")+1:materia.find(")")]
+            materia = Materia.find_first(models.Q(codigo=codigo))
+            c = CarreraMaterias.crear_asociacion(carrera, materia)
+
+    ''' Validaciones - Inicio'''
+    @classmethod
+    def validar_carrera(cls, nombre):
+        if cls.nombre_valido(nombre):
+            return True, 'Se dió de alta a la carrera de forma exitosa'
+        return False, Carrera.get_mensaje_de_error(nombre)
+
     @classmethod
     def nombre_valido(cls, nombre):
         existe = Carrera.objects.filter(nombre=nombre).exists()
@@ -154,11 +161,7 @@ class Carrera(BaseModel):
             return 'El nombre ingresado se encuentra en uso.'
         return 'Se ha producido un error.'
     
-    @classmethod
-    def validar_carrera(cls, nombre):
-        if cls.nombre_valido(nombre):
-            return True, 'Se dió de alta a la carrera de forma exitosa'
-        return False, Carrera.get_mensaje_de_error(nombre)
+    ''' Validaciones - Fin'''   
         
     
     '''
@@ -205,47 +208,12 @@ class Materia(BaseModel):
 
     def __str__(self):
         return f'({self.codigo}) {self.nombre}'
-
-    @property
-    def duracion(self):
-        if self.semestre == "Primer semestre" or self.semestre == "Segundo semestre":
-            return "Semestral"
-        return "6 semanas"
     
-    @property
-    def get_correlatividades(self):
-        correlativas = Correlatividades.find_all_actives(models.Q(codigo_de_materia=self))
-
-        if len(correlativas) == 0:
-            return " "
-
-        materias_correlativas = ''
-        for c in range(0, len(correlativas)-1):
-            materias_correlativas += f'{correlativas[c].codigo_de_correlativa.codigo}, '
-        materias_correlativas += correlativas[len(correlativas)-1].codigo_de_correlativa.codigo
-
-        return materias_correlativas
-
-    '''
-    Recibe el request.POST enviado desde la view
-    Genera una lista con todos los códigos de las correlativas seleccionadas
-    Crea las instancias de las correlativas de la materia dada de alta
-    '''
     @classmethod
-    def crear_correlativas(cls, materia, post):
-        correlativas = []
-        for i in range(4, len(post)-1):
-            correlativas.append(post[i])
-        
-        for correlativa in correlativas:
-            correlativa = correlativa[correlativa.find("(")+1:correlativa.find(")")]
-            c = Correlatividades.crear_correlativa(materia, correlativa)
-
-    @classmethod
-    def crear_materia(cls, data, post):
+    def crear_materia(cls, post):
         materia           = Materia()
-        materia.codigo    = data['codigo']
-        materia.nombre    = data['nombre']
+        materia.codigo    = post['input-codigo']
+        materia.nombre    = post['input-nombre']
         materia.año       = post.get('radio-button-año', 'value')
         materia.semestre  = post.get('radio-button-semestre', 'value')
         materia.save()
@@ -260,6 +228,28 @@ class Materia(BaseModel):
             cls.crear_correlativas(materia, post)
 
         return materia
+    
+    '''
+    Recibe el request.POST enviado desde la view
+    Genera una lista con todos los códigos de las correlativas seleccionadas
+    Crea las instancias de las correlativas de la materia dada de alta
+    '''
+    @classmethod
+    def crear_correlativas(cls, materia, post):
+        correlativas = []
+        for i in range(4, len(post)-1):
+            correlativas.append(post[i])
+        
+        for correlativa in correlativas:
+            correlativa = correlativa[correlativa.find("(")+1:correlativa.find(")")]
+            c = Correlatividades.crear_correlativa(materia, correlativa)
+    
+    ''' Validaciones - Inicio '''
+    @classmethod
+    def validar_materia(cls, codigo, nombre):
+        if cls.puede_dar_de_alta(codigo, nombre):
+            return True, 'Se dió de alta a la materia de forma exitosa'
+        return False, Materia.get_mensaje_de_error(codigo, nombre) 
 
     @classmethod
     def puede_dar_de_alta(cls, codigo, nombre):
@@ -280,6 +270,28 @@ class Materia(BaseModel):
         if not cls.nombre_valido(nombre):
             return 'El nombre ingresado se encuentra en uso.'
         return 'Se ha producido un error.'
+
+    ''' Validaciones - Fin ''' 
+    
+    @property
+    def duracion(self):
+        if self.semestre == "Primer semestre" or self.semestre == "Segundo semestre":
+            return "Semestral"
+        return "6 semanas"
+    
+    @property
+    def get_correlatividades(self):
+        correlativas = Correlatividades.find_all_actives(models.Q(codigo_de_materia=self))
+
+        if len(correlativas) == 0:
+            return " "
+
+        materias_correlativas = ''
+        for c in range(0, len(correlativas)-1):
+            materias_correlativas += f'{correlativas[c].codigo_de_correlativa.codigo}, '
+        materias_correlativas += correlativas[len(correlativas)-1].codigo_de_correlativa.codigo
+
+        return materias_correlativas
 
 
 class Correlatividades(BaseModel):
