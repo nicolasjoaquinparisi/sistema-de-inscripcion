@@ -116,8 +116,7 @@ def eliminar_carrera(request, carrera_id):
 
 @login_required
 def listar_materias(request):
-    materias = Materia.find_all_actives()
-    context = {'materias':materias}
+    context = Materia.get_materias()
     return render(request, 'admin/listar-materias.html', context)
 
 

@@ -216,24 +216,18 @@ class Materia(BaseModel):
         return f'({self.codigo}) {self.nombre}'
     
     @classmethod
-    def crear_materia(cls, post):
-        materia           = Materia()
+    def set_values(cls, materia, post):
         materia.codigo    = post['input-codigo']
         materia.nombre    = post['input-nombre']
         materia.año       = post.get('radio-button-año', 'value')
         materia.semestre  = post.get('radio-button-semestre', 'value')
         materia.save()
 
-        '''
-        Se verifica si la materia tiene correlatividades
-        Si el request.POST tiene 4 elementos, entonces es porque no tiene correlativas la materia
-        (El primer elemento es el codigo, el segundo, el nombre, el tercero, el año y el último el token)
-        '''
-        post = list(post)
-        if len(post) > 5:
-            cls.crear_correlativas(materia, post)
-
-        return materia
+    @classmethod
+    def crear_materia(cls, post):
+        materia = Materia()
+        cls.set_values(materia, post)
+        cls.crear_correlativas(materia, list(post))
     
     '''
     Recibe el request.POST enviado desde la view
@@ -346,7 +340,16 @@ class Materia(BaseModel):
     @classmethod
     def get_materia(cls, materia_id):
         return Materia.find_pk(materia_id)
-    
+
+    @classmethod
+    def get_materias(cls):
+        return {'curso_de_ingreso' : Materia.find_all_actives(models.Q(semestre="Curso de ingreso")),
+                'primero': Materia.find_all_actives(models.Q(año="Primer año")),
+                'segundo': Materia.find_all_actives(models.Q(año="Segundo año")),
+                'tercero': Materia.find_all_actives(models.Q(año="Tercer año")),
+                'cuarto': Materia.find_all_actives(models.Q(año="Cuarto año")),
+                'quinto': Materia.find_all_actives(models.Q(año="Quinto año"))}
+
     @property
     def duracion(self):
         if self.semestre == "Primer semestre" or self.semestre == "Segundo semestre":
@@ -377,17 +380,9 @@ class Materia(BaseModel):
         return materias_formateadas
     
     def modificar(self, post):
-        self.codigo   = post['input-codigo']
-        self.nombre   = post['input-nombre']
-        self.año      = post.get('radio-button-año', 'value')
-        self.semestre = post.get('radio-button-semestre', 'value')
-
-        post = list(post)
-        if len(post) > 4:
-            Correlatividades.eliminar_correlatividades(self)
-            Materia.crear_correlativas(self, post)
-
-        self.save()
+        Materia.set_values(self, post)
+        Correlatividades.eliminar_correlatividades(self)
+        Materia.crear_correlativas(self, list(post))
 
 
 class Correlatividades(BaseModel):
