@@ -47,7 +47,7 @@
             </div>
         </div>
     {% else %}
-        <div class="p-3 mb-5 rounded w-75 p-3 container my-4">
+        <div class="p-3 mb-5 rounded p-3 container my-4" style="width: 80%;">
             <div class="table-border table-responsive table--no-card m-b-30">
                 <table id="tabla" class="table table-borderless border table-striped table-earning">
                     <thead>
@@ -62,7 +62,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for materia in curso_de_ingreso %}
+                        {% for materia in materias %}
                         <tr>
                             <td class="text-center">{{materia.codigo}}</td>
                             <td class="text-center">{{materia.nombre}}</td>

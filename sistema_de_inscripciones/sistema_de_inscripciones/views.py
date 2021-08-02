@@ -116,7 +116,7 @@ def eliminar_carrera(request, carrera_id):
 
 @login_required
 def listar_materias(request):
-    context = Materia.get_materias()
+    context = {'materias':Materia.get_sorted_materias()}
     return render(request, 'admin/listar-materias.html', context)
 
 
@@ -155,7 +155,7 @@ def modificar_materia(request, materia_id):
     if request.method == 'POST':
         post = request.POST
 
-        validacion = materia.validar_modificacion(post['input-codigo'], post['input-nombre'])
+        validacion           = materia.validar_modificacion(post['input-codigo'], post['input-nombre'])
         resultado_validacion = validacion[0]
         mensaje_validaciones = validacion[1]
 
@@ -167,11 +167,11 @@ def modificar_materia(request, materia_id):
         if resultado_validacion:
             materia.modificar(post)
         else:
-            context = {'materias':Materia.find_all_actives()}
+            context = {'materias':Materia.find_all_actives_except(materia)}
         
         return HttpResponse(json.dumps(response_data))
     else:
-        context = {'materia': materia, 'correlativas': materia.get_correlativas, 'materias':Materia.find_all_actives()}
+        context = {'materia': materia, 'correlativas': materia.get_correlativas, 'materias':Materia.find_all_actives_except(materia)}
     
     return render(request, 'admin/alta-modificacion-materia.html', context)
 

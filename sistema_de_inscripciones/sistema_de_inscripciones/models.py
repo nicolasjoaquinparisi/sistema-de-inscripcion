@@ -336,19 +336,65 @@ class Materia(BaseModel):
         return True
 
     ''' Validaciones - Fin '''
+
+    @classmethod
+    def find_all_actives_except(cls, materia):
+        return cls.find_all_actives(~models.Q(codigo=materia.codigo))
     
     @classmethod
     def get_materia(cls, materia_id):
         return Materia.find_pk(materia_id)
-
+    
     @classmethod
-    def get_materias(cls):
-        return {'curso_de_ingreso' : Materia.find_all_actives(models.Q(semestre="Curso de ingreso")),
-                'primero': Materia.find_all_actives(models.Q(año="Primer año")),
-                'segundo': Materia.find_all_actives(models.Q(año="Segundo año")),
-                'tercero': Materia.find_all_actives(models.Q(año="Tercer año")),
-                'cuarto': Materia.find_all_actives(models.Q(año="Cuarto año")),
-                'quinto': Materia.find_all_actives(models.Q(año="Quinto año"))}
+    def get_sorted_materias(cls):
+        materias = []
+
+        query = Materia.find_all_actives(models.Q(semestre="Curso de ingreso"))
+        for materia in query:
+            materias.append(materia)
+        
+        query = Materia.find_all_actives(models.Q(año="Primer año") & models.Q(semestre="Primer semestre"))
+        for materia in query:
+            materias.append(materia)
+        
+        query = Materia.find_all_actives(models.Q(año="Primer año") & models.Q(semestre="Segundo semestre"))
+        for materia in query:
+            materias.append(materia)
+        
+        query = Materia.find_all_actives(models.Q(año="Segundo año") & models.Q(semestre="Primer semestre"))
+        for materia in query:
+            materias.append(materia)
+        
+        query = Materia.find_all_actives(models.Q(año="Segundo año") & models.Q(semestre="Segundo semestre"))
+        for materia in query:
+            materias.append(materia)
+        
+        query = Materia.find_all_actives(models.Q(año="Tercer año") & models.Q(semestre="Primer semestre"))
+        for materia in query:
+            materias.append(materia)
+        
+        query = Materia.find_all_actives(models.Q(año="Tercer año") & models.Q(semestre="Segundo semestre"))
+        for materia in query:
+            materias.append(materia)
+        
+        query = Materia.find_all_actives(models.Q(año="Cuarto año") & models.Q(semestre="Primer semestre"))
+        for materia in query:
+            materias.append(materia)
+        
+        query = Materia.find_all_actives(models.Q(año="Cuarto año") & models.Q(semestre="Segundo semestre"))
+        for materia in query:
+            materias.append(materia)
+        
+        query = Materia.find_all_actives(models.Q(año="Quinto año") & models.Q(semestre="Primer semestre"))
+        for materia in query:
+            materias.append(materia)
+        
+        query = Materia.find_all_actives(models.Q(año="Quinto año") & models.Q(semestre="Segundo semestre"))
+        for materia in query:
+            materias.append(materia)
+        
+        return materias
+
 
     @property
     def duracion(self):
