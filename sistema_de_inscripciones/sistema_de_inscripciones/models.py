@@ -301,9 +301,6 @@ class Materia(BaseModel):
     
     def validar_modificacion_codigo(self, codigo):
         #Si es la misma materia
-        print(self.codigo)
-        print(codigo)
-
         if self.codigo == codigo:
             return True
         
@@ -325,13 +322,10 @@ class Materia(BaseModel):
         return True
     
     def validar_modificacion_nombre(self, nombre):
-        print(self.nombre)
-        print(nombre)
         if self.nombre == nombre:
             return True
 
         existe = Materia.objects.filter(nombre=nombre).exists()
-        print(existe)
         if existe:
             materia = Materia.objects.filter(nombre=nombre).first()
 
@@ -382,11 +376,17 @@ class Materia(BaseModel):
         
         return materias_formateadas
     
-    def modificar(self, codigo, nombre, año, semestre):
-        self.codigo   = codigo
-        self.nombre   = nombre
-        self.año      = año
-        self.semestre = semestre
+    def modificar(self, post):
+        self.codigo   = post['input-codigo']
+        self.nombre   = post['input-nombre']
+        self.año      = post.get('radio-button-año', 'value')
+        self.semestre = post.get('radio-button-semestre', 'value')
+
+        post = list(post)
+        if len(post) > 4:
+            Correlatividades.eliminar_correlatividades(self)
+            Materia.crear_correlativas(self, post)
+
         self.save()
 
 
@@ -404,6 +404,12 @@ class Correlatividades(BaseModel):
         correlativa.codigo_de_correlativa = materia
 
         correlativa.save()
+
+    @classmethod
+    def eliminar_correlatividades(cls, materia):
+        instancias = cls.find_all_actives(models.Q(codigo_de_materia=materia))
+        for instancia in instancias:
+            instancia.delete()
     
     @classmethod
     def get_correlativas_de_materia(cls, materia):

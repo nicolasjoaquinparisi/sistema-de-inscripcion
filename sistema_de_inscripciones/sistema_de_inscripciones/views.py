@@ -166,8 +166,7 @@ def modificar_materia(request, materia_id):
         }
 
         if resultado_validacion:
-            materia.modificar(post['input-codigo'], post['input-nombre'], 
-                            post.get('radio-button-año', 'value'), post.get('radio-button-semestre', 'value'))
+            materia.modificar(post)
         else:
             context = {'materias':Materia.find_all_actives()}
         
