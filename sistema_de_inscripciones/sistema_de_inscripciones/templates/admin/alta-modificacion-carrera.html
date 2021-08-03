@@ -1,85 +1,64 @@
-{% load static %}
+{% extends "bases/template-base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
+{% block title %} Carrera {% endblock %}
 
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% block body-on-load %}initializeEditarCarrera("{{carrera.año}}","{{carrera.materias}}"){% endblock %}
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
-    <link rel="stylesheet" href="sweetalert2.min.css">
-    <title>Carreras</title>
-</head>
-
-<body onload='initializeEditarCarrera("{{carrera.año}}","{{carrera.materias}}")';>
-
-    {% include 'bases/header.html' %}
-
-    {% include 'admin/admin-nav-bar.html' %}
-
-    <div class="container-fluid shadow bg-white border p-3 mt-5" style="width: 30%">
-        <h3 class="mb-4">Alta de carrera</h3>
-        <form method="POST">
-            <h5 for="input-nombre" class="form-label">Nombre</h5>
-            <input type="text" class="form-control mb-3" id="input-nombre" required="True" 
+{% block content %}
+<div class="container-fluid shadow bg-white border p-3 mt-5" style="width: 30%">
+    <h3 class="mb-4">Alta de carrera</h3>
+    <form method="POST">
+        <h5 for="input-nombre" class="form-label">Nombre</h5>
+        <input type="text" class="form-control mb-3" id="input-nombre" required="True"
             placeholder="Ingrese el nombre de la carrera" name="nombre" value="{{carrera.nombre}}">
 
-            <h5 for="input-descripcion" class="form-label">Descripcion</h5>
-            <textarea class="form-control mb-3" placeholder="Ingrese la descripción de la carrera" 
-            id="input-descripcion" name="descripcion" required="True" size="2000" rows="3" style="resize: none;">{{carrera.descripcion}}</textarea>
-            
-            <div>
-                <h5 class="mb-3">Duración</h5>
-                
-                <div class="d-flex justify-content-center">
-                    <div class="form-check me-2">
-                        <input class="form-check-input" type="radio" value="Terciario" name="radio-button-año" id="terciario">
-                        <label class="form-check-label" for="terciario">
+        <h5 for="input-descripcion" class="form-label">Descripcion</h5>
+        <textarea class="form-control mb-3" placeholder="Ingrese la descripción de la carrera" id="input-descripcion"
+            name="descripcion" required="True" size="2000" rows="3"
+            style="resize: none;">{{carrera.descripcion}}</textarea>
+
+        <div>
+            <h5 class="mb-3">Duración</h5>
+
+            <div class="d-flex justify-content-center">
+                <div class="form-check me-2">
+                    <input class="form-check-input" type="radio" value="Terciario" name="radio-button-año"
+                        id="terciario">
+                    <label class="form-check-label" for="terciario">
                         Terciario
-                        </label>
-                    </div>
+                    </label>
+                </div>
 
-                    <div class="form-check me-2">
-                        <input class="form-check-input" type="radio" value="Grado" name="radio-button-año" id="grado">
-                        <label class="form-check-label" for="grado">
-                            Grado
-                        </label>
-                    </div>
+                <div class="form-check me-2">
+                    <input class="form-check-input" type="radio" value="Grado" name="radio-button-año" id="grado">
+                    <label class="form-check-label" for="grado">
+                        Grado
+                    </label>
                 </div>
             </div>
-            
-            {% if materias.count > 0 %}
-                <div class="border p-3 mt-3">
-                    <h4 class="mb-3">Materias</h4>
+        </div>
 
-                    {% for materia in materias %}
-                    <div class="form-check">
-                        <input id="{{materia}}" class="materia form-check-input" name="{{materia}}" type="checkbox" onclick='onCheckBoxMateriaClick("{{materia}}")'>
-                        <label for="{{materia}}" class="form-label">{{materia}}</label>
-                        <br>
-                    </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
+        {% if materias.count > 0 %}
+        <div class="border p-3 mt-3">
+            <h4 class="mb-3">Materias</h4>
 
-            <div class="d-flex justify-content-end mt-3">
-                <a href="/listar-carreras/" class="btn btn-secondary">Volver</a>
-                <button class="btn btn-primary ms-2" type="submit">Aceptar</button>
+            {% for materia in materias %}
+            <div class="form-check">
+                <input id="{{materia}}" class="materia form-check-input" name="{{materia}}" type="checkbox"
+                    onclick='onCheckBoxMateriaClick("{{materia}}")'>
+                <label for="{{materia}}" class="form-label">{{materia}}</label>
+                <br>
             </div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
-            {% csrf_token %}
-        </form>
-    </div>
-    
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{% static 'js/scripts.js' %}"></script>
-    <script src="{% static 'js/notifications.js' %}"></script>
-    
-</body>
+        <div class="d-flex justify-content-end mt-3">
+            <a href="/listar-carreras/" class="btn btn-secondary">Volver</a>
+            <button class="btn btn-primary ms-2" type="submit">Aceptar</button>
+        </div>
 
-</html>
+        {% csrf_token %}
+    </form>
+</div>
+{% endblock %}

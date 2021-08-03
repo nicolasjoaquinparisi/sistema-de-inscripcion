@@ -99,15 +99,15 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     USERNAME_FIELD = 'dni'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
 
 class Alumno(User):
     fecha_nacimiento = models.DateTimeField()
     fecha_de_alta    = models.DateField()
     domicilio        = models.CharField(max_length=150, blank=True)
     legajo           = models.IntegerField()
-
-    def __str__(self):
-        return f'\'{self.last_name}\', \'{self.first_name}\''
     
     @property
     def descripcion(self):

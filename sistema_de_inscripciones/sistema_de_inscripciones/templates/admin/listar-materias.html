@@ -1,39 +1,19 @@
-{% load static %}
+{% extends "bases/template-base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
+{% block title %} Materias {% endblock %}
 
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% block content %}
+    <div class="container-xxl">
+        <a class="btn btn-xl button-altas text-secondary" type="button" href="/alta-materia">Dar de alta materia</a>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
-    <link rel="stylesheet" href="sweetalert2.min.css">
-    <title>Materias</title>
-</head>
+        <br>
 
-<body>
-
-    {% include 'bases/header.html' %}
-
-    {% include 'admin/admin-nav-bar.html' %}
-
-    <div class="container-fluid">
-        <a class="me-3 btn btn-xl button-altas text-secondary" type="button" href="/alta-materia">Dar de alta materia</a>
-    </div>
-
-    <br>
-
-    {% if materias.count == 0 %}
+        {% if materias.count == 0 %}
         <div id="mensaje" class="container p-4">
             <div class="row">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-alert-circle" width="100"
-                    height="100" viewBox="0 0 24 24" stroke-width="1.5" stroke="#9e9e9e" fill="none" stroke-linecap="round"
-                    stroke-linejoin="round">
+                    height="100" viewBox="0 0 24 24" stroke-width="1.5" stroke="#9e9e9e" fill="none"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <circle cx="12" cy="12" r="9" />
                     <line x1="12" y1="8" x2="12" y2="12" />
@@ -46,7 +26,7 @@
                 </div>
             </div>
         </div>
-    {% else %}
+        {% else %}
         <div class="p-3 mb-5 rounded p-3 container my-4" style="width: 80%;">
             <div class="table-border table-responsive table--no-card m-b-30">
                 <table id="tabla" class="table table-borderless border table-striped table-earning">
@@ -69,22 +49,16 @@
                             <td class="text-center">{{materia.año}}</td>
                             <td class="text-center">{{materia.duracion}}</td>
                             <td class="text-center">{{ materia.get_correlatividades }}</td>
-                            <td><a href="/modificar-materia/{{materia.id}}" class="text-center text-primary btn btn-link">Editar</a></td>
-                            <td><button class="text-danger btn btn-link ms-3" onclick='onEliminarMateriaClick("{{materia.pk}}")'>Eliminar</button></td>
+                            <td><a href="/modificar-materia/{{materia.id}}"
+                                    class="text-center text-primary btn btn-link">Editar</a></td>
+                            <td><button class="text-danger btn btn-link ms-3"
+                                    onclick='onEliminarMateriaClick("{{materia.pk}}")'>Eliminar</button></td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
-    {% endif %}
+        {% endif %}
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{% static 'js/scripts.js' %}"></script>
-    <script src="{% static 'js/notifications.js' %}"></script>
-    
-</body>
-
-</html>
+{% endblock %}

@@ -1,10 +1,12 @@
 :root {
     --primary: #1d5aaa;
     --light-primary: #367cd8;
+    --secondary: #b3cef1;
+    --light-gray: rgb(238, 238, 238);
 }
 
 body {
-    background-color: #f7f6f6
+    background-color: #f7f6f6;
 }
 
 .nav {
@@ -18,7 +20,7 @@ body {
     padding: 1rem 2rem;
 }
 .nav-button:hover {
-    background-color: var(--light-primary);
+    background-color: var(--secondary);
     cursor: pointer;
 }
 
@@ -30,7 +32,8 @@ body {
 }
 
 .btn-xl {
-    padding: 1rem;
+    padding: 0;
+    margin: 0;
     font-size: 2rem;
 }
 .btn-xl:hover {
@@ -38,6 +41,11 @@ body {
 }
 .btn-xl:focus {
     outline: none;
+}
+
+.no-btn {
+    background-color: transparent;
+    border-color: transparent;
 }
 
 .btn-link {

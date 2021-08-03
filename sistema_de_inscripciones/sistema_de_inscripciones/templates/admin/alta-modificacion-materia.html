@@ -1,142 +1,128 @@
-{% load static %}
+{% extends "bases/template-base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
+{% block title %} Materias {% endblock %}
 
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% block body-on-load %}initializeEditarMateria("{{materia.año}}", "{{materia.semestre}}", "{{correlativas}}"){%
+endblock %}
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
-    <link rel="stylesheet" href="sweetalert2.min.css">
-    <title>Carreras</title>
-</head>
-
-<body onload='initializeEditarMateria("{{materia.año}}", "{{materia.semestre}}", "{{correlativas}}")'>
-
-    {% include 'bases/header.html' %}
-
-    {% include 'admin/admin-nav-bar.html' %}
-
-    <div class="container-fluid shadow bg-white border p-3 mt-5" style="width: 40%;">
-        <h3 class="mb-4">Alta de materia</h3>
-        <form method="POST">
-            <label for="input-codigo">Código:</label>
-            <input type="text" id="input-codigo" class="form-control" name="input-codigo" 
+{% block content %}
+<div class="container-fluid shadow bg-white border p-3 mt-5" style="width: 40%;">
+    <h3 class="mb-4">Alta de materia</h3>
+    <form method="POST">
+        <label for="input-codigo">Código:</label>
+        <input type="text" id="input-codigo" class="form-control" name="input-codigo"
             placeholder="Ingrese el codigo de la materia" required="True" value="{{materia.codigo}}">
 
-            <label class="mt-2" for="input-nombre">Nombre:</label>
-            <input type="text" id="input-nombre" class="form-control" name="input-nombre" 
+        <label class="mt-2" for="input-nombre">Nombre:</label>
+        <input type="text" id="input-nombre" class="form-control" name="input-nombre"
             placeholder="Ingrese el nombre de la materia" required="True" value="{{materia.nombre}}">
-            
-            <hr>
 
-            <div>
-                <h5 class="mb-3">Año</h5>
-                
-                <div class="d-flex justify-content-center">
-                    <div class="form-check me-2">
-                        <input class="form-check-input" type="radio" value="Primer año" name="radio-button-año" id="primer-año">
-                        <label class="form-check-label" for="primer-año">
+        <hr>
+
+        <div>
+            <h5 class="mb-3">Año</h5>
+
+            <div class="d-flex justify-content-center">
+                <div class="form-check me-2">
+                    <input class="form-check-input" type="radio" value="Primer año" name="radio-button-año"
+                        id="primer-año">
+                    <label class="form-check-label" for="primer-año">
                         Primero
-                        </label>
-                    </div>
-
-                    <div class="form-check me-2">
-                        <input class="form-check-input" type="radio" value="Segundo año" name="radio-button-año" id="segundo-año">
-                        <label class="form-check-label" for="segundo-año">
-                            Segundo
-                        </label>
-                    </div>
-
-                    <div class="form-check me-2">
-                        <input class="form-check-input" type="radio" value="Tercer año" name="radio-button-año" id="tercer-año">
-                        <label class="form-check-label" for="tercer-año">
-                            Tercero
-                        </label>
-                    </div>
-
-                    <div class="form-check me-2">
-                        <input class="form-check-input" type="radio" value="Cuarto año" name="radio-button-año" id="cuarto-año">
-                        <label class="form-check-label" for="cuarto-año">
-                            Cuarto
-                        </label>
-                    </div>
-
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" value="Quinto año" name="radio-button-año" id="quinto-año">
-                        <label class="form-check-label" for="quinto-año">
-                            Quinto
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <hr>
-                <h5 class="mb-3 mt-3">Semestre</h5>
-                <div class="d-flex">
-                    <div class="form-check me-2">
-                        <input class="form-check-input" type="radio" value="Curso de ingreso" name="radio-button-semestre" id="curso-de-ingreso">
-                        <label class="form-check-label" for="curso-de-ingreso">
-                        Curso de ingreso
-                        </label>
-                    </div>
-
-                    <div class="form-check me-2">
-                        <input class="form-check-input" type="radio" value="Primer semestre" name="radio-button-semestre" id="primer-semestre">
-                        <label class="form-check-label" for="primer-semestre">
-                        Primero
-                        </label>
-                    </div>
-
-                    <div class="form-check me-2">
-                        <input class="form-check-input" type="radio" value="Segundo semestre" name="radio-button-semestre" id="segundo-semestre">
-                        <label class="form-check-label" for="segundo-semestre">
-                            Segundo
-                        </label>
-                    </div>
-                </div>
-            </div>
-            
-            {% if materias.count > 0 %}
-                <hr>
-
-                <div class="d-flex justify-content-between">
-                    <h5 class="mb-3">Correlatividades</h5>
-                    <input type="checkbox" onclick="onSeleccionarTodasLasCorrelativasClick()">
+                    </label>
                 </div>
 
-                {% for materia in materias %}
+                <div class="form-check me-2">
+                    <input class="form-check-input" type="radio" value="Segundo año" name="radio-button-año"
+                        id="segundo-año">
+                    <label class="form-check-label" for="segundo-año">
+                        Segundo
+                    </label>
+                </div>
+
+                <div class="form-check me-2">
+                    <input class="form-check-input" type="radio" value="Tercer año" name="radio-button-año"
+                        id="tercer-año">
+                    <label class="form-check-label" for="tercer-año">
+                        Tercero
+                    </label>
+                </div>
+
+                <div class="form-check me-2">
+                    <input class="form-check-input" type="radio" value="Cuarto año" name="radio-button-año"
+                        id="cuarto-año">
+                    <label class="form-check-label" for="cuarto-año">
+                        Cuarto
+                    </label>
+                </div>
+
                 <div class="form-check">
-                    <input id="{{materia.codigo}}" class="materia form-check-input" name="{{materia}}" type="checkbox" onclick='onCheckBoxMateriaClick("{{materia}}")'>
-                    <label for="{{materia.codigo}}" class="form-label">{{materia}}</label>
-                    <br>
+                    <input class="form-check-input" type="radio" value="Quinto año" name="radio-button-año"
+                        id="quinto-año">
+                    <label class="form-check-label" for="quinto-año">
+                        Quinto
+                    </label>
                 </div>
-                {% endfor %}
-
-            {% endif %}
-
-            <hr>
-
-            <div class="d-flex justify-content-end mt-3">
-                <a href="/listar-materias/" class="btn btn-secondary">Volver</a>
-                <button class="btn btn-primary ms-2" type="submit">Aceptar</button>
             </div>
+        </div>
 
-            {% csrf_token %}
-        </form>
-        
-    </div>
+        <div>
+            <hr>
+            <h5 class="mb-3 mt-3">Semestre</h5>
+            <div class="d-flex">
+                <div class="form-check me-2">
+                    <input class="form-check-input" type="radio" value="Curso de ingreso" name="radio-button-semestre"
+                        id="curso-de-ingreso">
+                    <label class="form-check-label" for="curso-de-ingreso">
+                        Curso de ingreso
+                    </label>
+                </div>
 
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{% static 'js/scripts.js' %}"></script>
-    <script src="{% static 'js/notifications.js' %}"></script>
+                <div class="form-check me-2">
+                    <input class="form-check-input" type="radio" value="Primer semestre" name="radio-button-semestre"
+                        id="primer-semestre">
+                    <label class="form-check-label" for="primer-semestre">
+                        Primero
+                    </label>
+                </div>
 
-</body>
+                <div class="form-check me-2">
+                    <input class="form-check-input" type="radio" value="Segundo semestre" name="radio-button-semestre"
+                        id="segundo-semestre">
+                    <label class="form-check-label" for="segundo-semestre">
+                        Segundo
+                    </label>
+                </div>
+            </div>
+        </div>
 
-</html>
+        {% if materias.count > 0 %}
+        <hr>
+
+        <div class="d-flex justify-content-between">
+            <h5 class="mb-3">Correlatividades</h5>
+            <input type="checkbox" onclick="onSeleccionarTodasLasCorrelativasClick()">
+        </div>
+
+        {% for materia in materias %}
+        <div class="form-check">
+            <input id="{{materia.codigo}}" class="materia form-check-input" name="{{materia}}" type="checkbox"
+                onclick='onCheckBoxMateriaClick("{{materia}}")'>
+            <label for="{{materia.codigo}}" class="form-label">{{materia}}</label>
+            <br>
+        </div>
+        {% endfor %}
+
+        {% endif %}
+
+        <hr>
+
+        <div class="d-flex justify-content-end mt-3">
+            <a href="/listar-materias/" class="btn btn-secondary">Volver</a>
+            <button class="btn btn-primary ms-2" type="submit">Aceptar</button>
+        </div>
+
+        {% csrf_token %}
+    </form>
+
+</div>
+{% endblock %}
