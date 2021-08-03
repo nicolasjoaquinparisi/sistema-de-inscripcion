@@ -25,7 +25,7 @@
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{% static 'js/scripts.js' %}"></script>
-    <script src="{% static 'js/notifications.js' %}"></script>
+    {% block scripts %} {% endblock %}
 </body>
 
 </html>
