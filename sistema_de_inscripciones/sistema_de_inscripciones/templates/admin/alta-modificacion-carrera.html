@@ -1,5 +1,7 @@
 {% extends "bases/template-base.html" %}
 
+{% load static %}
+
 {% block title %} Carrera {% endblock %}
 
 {% block body-on-load %}initializeEditarCarrera("{{carrera.año}}","{{carrera.materias}}"){% endblock %}

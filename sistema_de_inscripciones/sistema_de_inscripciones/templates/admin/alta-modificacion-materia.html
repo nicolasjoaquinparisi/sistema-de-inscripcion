@@ -1,5 +1,7 @@
 {% extends "bases/template-base.html" %}
 
+{% load static %}
+
 {% block title %} Materias {% endblock %}
 
 {% block body-on-load %}initializeEditarMateria("{{materia.año}}", "{{materia.semestre}}", "{{correlativas}}"){%
