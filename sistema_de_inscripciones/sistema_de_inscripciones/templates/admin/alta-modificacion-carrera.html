@@ -4,7 +4,7 @@
 
 {% block title %} Carrera {% endblock %}
 
-{% block body-on-load %}initializeEditarCarrera("{{carrera.año}}","{{carrera.materias}}"){% endblock %}
+{% block body-on-load %}onload='initializeEditarCarrera("{{carrera.año}}","{{carrera.materias}}")'{% endblock %}
 
 {% block content %}
 <div class="container-fluid shadow bg-white border p-3 mt-5" style="width: 30%">

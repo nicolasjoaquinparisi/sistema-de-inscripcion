@@ -15,7 +15,7 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 
-<body onload='"{% block body-on-load %}{% endblock %}"'>
+<body {% block body-on-load %}{% endblock %}>
     {% include 'bases/header.html' %}
 
     <div class="container">

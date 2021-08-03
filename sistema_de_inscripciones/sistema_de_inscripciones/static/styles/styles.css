@@ -24,6 +24,16 @@ body {
     cursor: pointer;
 }
 
+.form-login {
+    margin: 0 .5rem;
+    width: auto;
+}
+@media (min-width: 768px) {
+    .form-login {
+        width: 25%;
+    }
+}
+
 .button-altas {
     font-size: 1.1rem;
 }

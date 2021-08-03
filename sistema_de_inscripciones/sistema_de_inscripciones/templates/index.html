@@ -3,8 +3,8 @@
 {% block title %} Inicio de sesión {% endblock %}
 
 {% block content %}
-    <div class="container-fluid w-25 mt-5">
-        <form class="shadow-lg p-3 mb-5 bg-white rounded my-4 form-signin" method="POST">
+    <div class="d-flex justify-content-center align-items-center">
+        <form class="p-3 mt-5 mb-5 shadow-lg bg-white rounded form-login" method="POST">
             {% csrf_token %}
             <main>
                 <div class="d-flex justify-content-center align-items-center">
@@ -17,16 +17,12 @@
                 <div class="d-flex justify-content-center align-items-center">
                     <button class="btn btn-lg btn-primary btn-block w-75" type="submit">Ingresar</button>
                 </div>
-            </main>
             <br>
-            <section>
                 <div class="d-flex justify-content-start align-items-center">
-                    <label class="font-weight-normal">¿No te has registrado aún?</label>
-                    <a class="btn btn-link linkbutton-register" href="/#">Hazlo aquí</a>
+                    <small class="font-weight-normal me-1">¿No te has registrado aún?</small>
+                    <a class="btn btn-link linkbutton-register" href="/#"><small>Hazlo aquí</small></a>
                 </div>
-            </section>
+            </main>
         </form>
     </div>
 {% endblock %}
-
-{% block scripts %} {% endblock %}
